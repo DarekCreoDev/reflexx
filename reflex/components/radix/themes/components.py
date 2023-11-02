@@ -1,22 +1,23 @@
 """Interactive components provided by @radix-ui/themes."""
-from typing import Any, Dict, Literal
+from typing import Any, Dict
 
 from reflex import el
 from reflex.components.component import Component
 from reflex.components.forms.debounce import DebounceInput
+from reflex.components.literals.radix import (
+    LiteralAccentColor,
+    LiteralButtonSize,
+    LiteralRadius,
+    LiteralSize,
+    LiteralSwitchSize,
+    LiteralTextFieldSize,
+    LiteralTextFieldVariant,
+    LiteralVariant,
+)
 from reflex.constants import EventTriggers
 from reflex.vars import Var
 
-from .base import (
-    CommonMarginProps,
-    LiteralAccentColor,
-    LiteralRadius,
-    LiteralSize,
-    LiteralVariant,
-    RadixThemesComponent,
-)
-
-LiteralButtonSize = Literal["1", "2", "3", "4"]
+from .base import CommonMarginProps, RadixThemesComponent
 
 
 class Button(CommonMarginProps, RadixThemesComponent):
@@ -41,9 +42,6 @@ class Button(CommonMarginProps, RadixThemesComponent):
 
     # Override theme radius for button: "none" | "small" | "medium" | "large" | "full"
     radius: Var[LiteralRadius]
-
-
-LiteralSwitchSize = Literal["1", "2", "3", "4"]
 
 
 class Switch(CommonMarginProps, RadixThemesComponent):
@@ -97,10 +95,6 @@ class Switch(CommonMarginProps, RadixThemesComponent):
             **super().get_event_triggers(),
             EventTriggers.ON_CHECKED_CHANGE: lambda checked: [checked],
         }
-
-
-LiteralTextFieldSize = Literal["1", "2", "3"]
-LiteralTextFieldVariant = Literal["classic", "surface", "soft"]
 
 
 class TextFieldRoot(CommonMarginProps, RadixThemesComponent):

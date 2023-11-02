@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
 from reflex.components import Component
+from reflex.components.literals.radix import (
+    LiteralAccentColor,
+    LiteralAppearance,
+    LiteralGrayColor,
+    LiteralPanelBackground,
+    LiteralRadius,
+    LiteralScaling,
+    LiteralSize,
+)
 from reflex.utils import imports
 from reflex.vars import ImportVar, Var
-
-LiteralAlign = Literal["start", "center", "end", "baseline", "stretch"]
-LiteralJustify = Literal["start", "center", "end", "between"]
-LiteralSize = Literal["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-LiteralVariant = Literal["solid", "soft", "outline", "ghost"]
 
 
 class CommonMarginProps(Component):
@@ -74,41 +76,6 @@ class RadixThemesComponent(Component):
 
     def _get_style(self) -> dict:
         return {"style": self.style}
-
-
-LiteralAccentColor = Literal[
-    "tomato",
-    "red",
-    "ruby",
-    "crimson",
-    "pink",
-    "plum",
-    "purple",
-    "violet",
-    "iris",
-    "indigo",
-    "blue",
-    "cyan",
-    "teal",
-    "jade",
-    "green",
-    "grass",
-    "brown",
-    "orange",
-    "sky",
-    "mint",
-    "lime",
-    "yellow",
-    "amber",
-    "gold",
-    "bronze",
-    "gray",
-]
-LiteralAppearance = Literal["inherit", "light", "dark"]
-LiteralGrayColor = Literal["gray", "mauve", "slate", "sage", "olive", "sand", "auto"]
-LiteralPanelBackground = Literal["solid", "transparent"]
-LiteralRadius = Literal["none", "small", "medium", "large", "full"]
-LiteralScaling = Literal["90%", "95%", "100%", "105%", "110%"]
 
 
 class Theme(RadixThemesComponent):
