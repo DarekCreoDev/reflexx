@@ -1,8 +1,7 @@
 """Data Editor component from glide-data-grid."""
 from __future__ import annotations
 
-from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
 from reflex.base import Base
 from reflex.components.component import Component, NoSSRComponent
@@ -11,95 +10,114 @@ from reflex.utils import console, format, imports, types
 from reflex.utils.serializers import serializer
 from reflex.vars import ImportVar, Var, get_unique_variable_name
 
-
-# TODO: Fix the serialization issue for custom types.
-class GridColumnIcons(Enum):
-    """An Enum for the available icons in DataEditor."""
-
-    Array = "array"
-    AudioUri = "audio_uri"
-    Boolean = "boolean"
-    HeaderCode = "code"
-    Date = "date"
-    Email = "email"
-    Emoji = "emoji"
-    GeoDistance = "geo_distance"
-    IfThenElse = "if_then_else"
-    Image = "image"
-    JoinStrings = "join_strings"
-    Lookup = "lookup"
-    Markdown = "markdown"
-    Math = "math"
-    Number = "number"
-    Phone = "phone"
-    Reference = "reference"
-    Rollup = "rollup"
-    RowID = "row_id"
-    SingleValue = "single_value"
-    SplitString = "split_string"
-    String = "string"
-    TextTemplate = "text_template"
-    Time = "time"
-    Uri = "uri"
-    VideoUri = "video_uri"
-
-
-# @serializer
-# def serialize_gridcolumn_icon(icon: GridColumnIcons) -> str:
-#     """Serialize grid column icon.
-
-#     Args:
-#         icon: the Icon to serialize.
-
-#     Returns:
-#         The serialized value.
-#     """
-#     return "prefix" + str(icon)
+LiteralDataEditorGridColumnIcons = Literal[
+    "headerRowID",
+    "headerCode",
+    "headerNumber",
+    "headerString",
+    "headerBoolean",
+    "headerAudioUri",
+    "headerVideoUri",
+    "headerEmoji",
+    "headerImage",
+    "headerUri",
+    "headerPhone",
+    "headerMarkdown",
+    "headerDate",
+    "headerTime",
+    "headerEmail",
+    "headerReference",
+    "headerIfThenElse",
+    "headerSingleValue",
+    "headerLookup",
+    "headerTextTemplate",
+    "headerMath",
+    "headerRollup",
+    "headerJoinStrings",
+    "headerSplitString",
+    "headerGeoDistance",
+    "headerArray",
+    "rowOwnerOverlay",
+    "protectedColumnOverlay",
+]
+LiteralDataEditorColumnStyle = Literal["normal", "highlight"]
 
 
-# class DataEditorColumn(Base):
-#     """Column."""
+class DataEditorProp(Base):
+    """Base class for Data Editor custom prop class."""
 
-#     title: str
-#     id: Optional[str] = None
-#     type_: str = "str"
+    def dict(self) -> dict:
+        """Retrieve dict and format keys to camel case.
+
+        Returns:
+            Formatted dict.
+        """
+        res = super().dict()
+        return {format.to_camel_case(k): v for k, v in res.items() if v is not None}
 
 
-class DataEditorTheme(Base):
+class DataEditorTheme(DataEditorProp):
     """The theme for the DataEditor component."""
 
-    accent_color: Optional[str] = None
-    accent_fg: Optional[str] = None
-    accent_light: Optional[str] = None
-    base_font_style: Optional[str] = None
-    bg_bubble: Optional[str] = None
-    bg_bubble_selected: Optional[str] = None
-    bg_cell: Optional[str] = None
-    bg_cell_medium: Optional[str] = None
-    bg_header: Optional[str] = None
-    bg_header_has_focus: Optional[str] = None
-    bg_header_hovered: Optional[str] = None
-    bg_icon_header: Optional[str] = None
-    bg_search_result: Optional[str] = None
-    border_color: Optional[str] = None
-    cell_horizontal_padding: Optional[int] = None
-    cell_vertical_padding: Optional[int] = None
-    drilldown_border: Optional[str] = None
-    editor_font_size: Optional[str] = None
-    fg_icon_header: Optional[str] = None
-    font_family: Optional[str] = None
-    header_bottom_border_color: Optional[str] = None
-    header_font_style: Optional[str] = None
-    horizontal_border_color: Optional[str] = None
-    line_height: Optional[int] = None
-    link_color: Optional[str] = None
-    text_bubble: Optional[str] = None
-    text_dark: Optional[str] = None
-    text_group_header: Optional[str] = None
-    text_header: Optional[str] = None
-    text_header_selected: Optional[str] = None
-    text_light: Optional[str] = None
-    text_medium: Optional[str] = None
+    accent_color: Optional[str]
+    accent_fg: Optional[str]
+    accent_light: Optional[str]
+    base_font_style: Optional[str]
+    bg_bubble: Optional[str]
+    bg_bubble_selected: Optional[str]
+    bg_cell: Optional[str]
+    bg_cell_medium: Optional[str]
+    bg_header: Optional[str]
+    bg_header_has_focus: Optional[str]
+    bg_header_hovered: Optional[str]
+    bg_icon_header: Optional[str]
+    bg_search_result: Optional[str]
+    border_color: Optional[str]
+    cell_horizontal_padding: Optional[int]
+    cell_vertical_padding: Optional[int]
+    drilldown_border: Optional[str]
+    editor_font_size: Optional[str]
+    fg_icon_header: Optional[str]
+    font_family: Optional[str]
+    header_bottom_border_color: Optional[str]
+    header_font_style: Optional[str]
+    horizontal_border_color: Optional[str]
+    line_height: Optional[int]
+    link_color: Optional[str]
+    text_bubble: Optional[str]
+    text_dark: Optional[str]
+    text_group_header: Optional[str]
+    text_header: Optional[str]
+    text_header_selected: Optional[str]
+    text_light: Optional[str]
+    text_medium: Optional[str]
+
+
+class TrailingRowOptions(DataEditorProp):
+    """Trailing Row options."""
+
+    hint: Optional[str]
+    add_icon: Optional[str]
+    target_column: Optional[int]
+    theme_override: Optional[DataEditorTheme]
+    disabled: Optional[bool]
+
+
+class DataEditorColumn(DataEditorProp):
+    """Column."""
+
+    title: str
+    id: Optional[str]
+    type_: str = "str"
+    group: Optional[str]
+    icon: Optional[LiteralDataEditorGridColumnIcons]
+    overlay_icon: Optional[LiteralDataEditorGridColumnIcons]
+    has_menu: Optional[bool]
+    grow: Optional[int]
+    style: Optional[LiteralDataEditorColumnStyle]
+    theme_override: Optional[DataEditorTheme]
+    trailing_row_options: Optional[TrailingRowOptions]
+    grow_offset: Optional[int]
 
 
 class DataEditor(NoSSRComponent):
@@ -114,7 +132,7 @@ class DataEditor(NoSSRComponent):
     rows: Var[int]
 
     # Headers of the columns for the data grid.
-    columns: Var[List[Dict[str, Any]]]
+    columns: Var[List[DataEditorColumn]]
 
     # The data.
     data: Var[List[List[Any]]]
@@ -307,9 +325,17 @@ class DataEditor(NoSSRComponent):
                     "Cannot pass in both a pandas dataframe and columns to the data_editor component."
                 )
             else:
-                props["columns"] = [
-                    format.format_data_editor_column(col) for col in columns
-                ]
+                if (
+                    not isinstance(columns, list)
+                    or isinstance(columns, list)
+                    and columns
+                    and not isinstance(columns[0], dict)
+                ):
+                    raise ValueError(
+                        "Data Editor columns field should be a list of dictionaries"
+                    )
+
+                props["columns"] = [DataEditorColumn(**c) for c in columns]
 
         if "theme" in props:
             theme = props.get("theme")
@@ -386,15 +412,13 @@ class DataEditor(NoSSRComponent):
 
 
 @serializer
-def serialize_dataeditortheme(theme: DataEditorTheme):
+def serialize_data_editor_prop(prop: DataEditorProp) -> dict:
     """The serializer for the data editor theme.
 
     Args:
-        theme: The theme to serialize.
+        prop: The prop to serialize.
 
     Returns:
-        The serialized theme.
+        The serialized prop.
     """
-    return format.json_dumps(
-        {format.to_camel_case(k): v for k, v in theme.__dict__.items() if v is not None}
-    )
+    return prop.dict()
