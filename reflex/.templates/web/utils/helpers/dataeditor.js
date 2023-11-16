@@ -23,6 +23,8 @@ export function formatCell(value, column) {
     switch (column.type) {
         case "int":
         case "float":
+        case "int64":
+        case "float64":
             return {
                 kind: GridCellKind.Number,
                 data: value,
