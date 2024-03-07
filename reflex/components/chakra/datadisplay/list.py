@@ -1,26 +1,38 @@
 """List components."""
-
 from __future__ import annotations
+
+from typing import Optional
 
 from reflex.components.chakra import ChakraComponent
 from reflex.components.component import Component
 from reflex.components.core.foreach import Foreach
 from reflex.vars import Var
 
-
 class List(ChakraComponent):
     """Display a list of items."""
 
-    tag = "List"
+    tag: str = "List"
 
     # The space between each list item
-    spacing: Var[str]
+    spacing: Optional[Var[str]] = None
 
     # Shorthand prop for listStylePosition
-    style_position: Var[str]
+    style_position: Optional[Var[str]] = None
 
     # Shorthand prop for listStyleType
-    style_type: Var[str]
+    style_type: Optional[Var[str]] = None
+
+    @classmethod
+    def __class_getitem__(cls, item):
+        """This method is just a hacky workaround to stop pydantic v2 from complaining.
+
+        Args:
+            item: The type of the list items.
+
+        Returns:
+            The list component.
+        """
+        return cls
 
     @classmethod
     def create(
@@ -47,16 +59,16 @@ class List(ChakraComponent):
 class ListItem(ChakraComponent):
     """A single list item."""
 
-    tag = "ListItem"
+    tag: str = "ListItem"
 
 
 class OrderedList(List):
     """An ordered list component with numbers."""
 
-    tag = "OrderedList"
+    tag: str = "OrderedList"
 
 
 class UnorderedList(List):
     """An unordered list component with bullets."""
 
-    tag = "UnorderedList"
+    tag: str = "UnorderedList"

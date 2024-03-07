@@ -1,5 +1,5 @@
 """Element classes. This is an auto-generated file. Do not edit. See ../generate.py."""
-from typing import Union
+from typing import Optional, Union
 
 from reflex.vars import Var as Var
 
@@ -9,118 +9,118 @@ from .base import BaseHTML
 class Caption(BaseHTML):
     """Display the caption element."""
 
-    tag = "caption"
+    tag: str = "caption"
 
     # Alignment of the caption
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Col(BaseHTML):
     """Display the col element."""
 
-    tag = "col"
+    tag: str = "col"
 
     # Alignment of the content within the column
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of columns the col element spans
-    span: Var[Union[str, int, bool]]
+    span: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Colgroup(BaseHTML):
     """Display the colgroup element."""
 
-    tag = "colgroup"
+    tag: str = "colgroup"
 
     # Alignment of the content within the column group
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of columns the colgroup element spans
-    span: Var[Union[str, int, bool]]
+    span: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Table(BaseHTML):
     """Display the table element."""
 
-    tag = "table"
+    tag: str = "table"
 
     # Alignment of the table
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
     # Provides a summary of the table's purpose and structure
-    summary: Var[Union[str, int, bool]]
+    summary: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Tbody(BaseHTML):
     """Display the tbody element."""
 
-    tag = "tbody"
+    tag: str = "tbody"
 
     # Alignment of the content within the table body
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Td(BaseHTML):
     """Display the td element."""
 
-    tag = "td"
+    tag: str = "td"
 
     # Alignment of the content within the table cell
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of columns a cell should span
-    col_span: Var[Union[str, int, bool]]
+    col_span: Optional[Var[Union[str, int, bool]]] = None
 
     # IDs of the headers associated with this cell
-    headers: Var[Union[str, int, bool]]
+    headers: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of rows a cell should span
-    row_span: Var[Union[str, int, bool]]
+    row_span: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Tfoot(BaseHTML):
     """Display the tfoot element."""
 
-    tag = "tfoot"
+    tag: str = "tfoot"
 
     # Alignment of the content within the table footer
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Th(BaseHTML):
     """Display the th element."""
 
-    tag = "th"
+    tag: str = "th"
 
     # Alignment of the content within the table header cell
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of columns a header cell should span
-    col_span: Var[Union[str, int, bool]]
+    col_span: Optional[Var[Union[str, int, bool]]] = None
 
     # IDs of the headers associated with this header cell
-    headers: Var[Union[str, int, bool]]
+    headers: Optional[Var[Union[str, int, bool]]] = None
 
     # Number of rows a header cell should span
-    row_span: Var[Union[str, int, bool]]
+    row_span: Optional[Var[Union[str, int, bool]]] = None
 
     # Scope of the header cell (row, col, rowgroup, colgroup)
-    scope: Var[Union[str, int, bool]]
+    scope: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Thead(BaseHTML):
     """Display the thead element."""
 
-    tag = "thead"
+    tag: str = "thead"
 
     # Alignment of the content within the table header
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Tr(BaseHTML):
     """Display the tr element."""
 
-    tag = "tr"
+    tag: str = "tr"
 
     # Alignment of the content within the table row
-    align: Var[Union[str, int, bool]]
+    align: Optional[Var[Union[str, int, bool]]] = None

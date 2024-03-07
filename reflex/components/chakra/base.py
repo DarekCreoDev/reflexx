@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from reflex.components.component import Component
 from reflex.utils import imports
@@ -12,7 +12,7 @@ from reflex.vars import Var
 class ChakraComponent(Component):
     """A component that wraps a Chakra component."""
 
-    library = "@chakra-ui/react@2.6.1"
+    library: str = "@chakra-ui/react@2.6.1"
     lib_dependencies: List[str] = [
         "@chakra-ui/system@2.5.7",
         "framer-motion@10.16.4",
@@ -53,9 +53,9 @@ class ChakraComponent(Component):
 class ChakraProvider(ChakraComponent):
     """Top level Chakra provider must be included in any app using chakra components."""
 
-    tag = "ChakraProvider"
+    tag: str = "ChakraProvider"
 
-    theme: Var[str]
+    theme: Optional[Var[str]] = None
 
     @classmethod
     def create(cls) -> Component:
@@ -70,7 +70,7 @@ class ChakraProvider(ChakraComponent):
 
     def _get_imports(self) -> imports.ImportDict:
         _imports = super()._get_imports()
-        _imports.setdefault(self.__fields__["library"].default, []).append(
+        _imports.setdefault(self.model_fields["library"].default, []).append(
             imports.ImportVar(tag="extendTheme", is_default=False),
         )
         _imports.setdefault("/utils/theme.js", []).append(
@@ -92,9 +92,9 @@ chakra_provider = ChakraProvider.create()
 class ChakraColorModeProvider(Component):
     """Next-themes integration for chakra colorModeProvider."""
 
-    library = "/components/reflex/chakra_color_mode_provider.js"
-    tag = "ChakraColorModeProvider"
-    is_default = True
+    library: str = "/components/reflex/chakra_color_mode_provider.js"
+    tag: str = "ChakraColorModeProvider"
+    is_default: bool = True
 
 
 chakra_color_mode_provider = ChakraColorModeProvider.create()

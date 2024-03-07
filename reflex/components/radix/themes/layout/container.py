@@ -1,7 +1,7 @@
 """Declarative layout and common spacing props."""
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 from reflex import el
 from reflex.vars import Var
@@ -17,7 +17,7 @@ class Container(el.Div, RadixThemesComponent):
     See https://www.radix-ui.com/themes/docs/components/container
     """
 
-    tag = "Container"
+    tag: str = "Container"
 
     # The size of the container: "1" - "4" (default "4")
-    size: Var[LiteralContainerSize]
+    size: Optional[Var[LiteralContainerSize]] = None

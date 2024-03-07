@@ -1,6 +1,5 @@
 """A highlight component."""
-
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from reflex.components.chakra import ChakraComponent
 from reflex.components.tags import Tag
@@ -10,10 +9,10 @@ from reflex.vars import Var
 class Highlight(ChakraComponent):
     """Highlights a specific part of a string."""
 
-    tag = "Highlight"
+    tag: str = "Highlight"
 
     # A query for the text to highlight. Can be a string or a list of strings.
-    query: Var[List[str]]
+    query: Optional[Var[List[str]]] = None
 
     # The style of the content.
     # Note: styles and style are different prop.

@@ -1,6 +1,5 @@
 """A reflexive container component."""
-
-from typing import List, Union
+from typing import List, Optional, Union
 
 from reflex.components.chakra import ChakraComponent
 from reflex.vars import Var
@@ -9,25 +8,25 @@ from reflex.vars import Var
 class Flex(ChakraComponent):
     """A reflexive container component."""
 
-    tag = "Flex"
+    tag: str = "Flex"
 
     # How to align items in the flex.
-    align: Var[str]
+    align: Optional[Var[str]] = None
 
     # Shorthand for flexBasis style prop
-    basis: Var[str]
+    basis: Optional[Var[str]] = None
 
     # Shorthand for flexDirection style prop
-    direction: Var[Union[str, List[str]]]
+    direction: Optional[Var[Union[str, List[str]]]] = None
 
     # Shorthand for flexGrow style prop
-    grow: Var[str]
+    grow: Optional[Var[str]] = None
 
     # The way to justify the items.
-    justify: Var[str]
+    justify: Optional[Var[str]] = None
 
     # Shorthand for flexWrap style prop
-    wrap: Var[Union[str, List[str]]]
+    wrap: Optional[Var[Union[str, List[str]]]] = None
 
     # Shorthand for flexShrink style prop
-    shrink: Var[str]
+    shrink: Optional[Var[str]] = None

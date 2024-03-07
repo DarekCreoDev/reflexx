@@ -1,5 +1,4 @@
 """Radix accordion components."""
-
 from __future__ import annotations
 
 from typing import Any, Dict, List, Literal, Optional, Union
@@ -300,36 +299,36 @@ def get_theme_accordion_content(variant: str | Var, color_scheme: str | Var) -> 
 class AccordionComponent(RadixPrimitiveComponent):
     """Base class for all @radix-ui/accordion components."""
 
-    library = "@radix-ui/react-accordion@^1.1.2"
+    library: str = "@radix-ui/react-accordion@^1.1.2"
 
 
 class AccordionRoot(AccordionComponent):
     """An accordion component."""
 
-    tag = "Root"
+    tag: str = "Root"
 
-    alias = "RadixAccordionRoot"
+    alias: str = "RadixAccordionRoot"
 
     # The type of accordion (single or multiple).
-    type: Var[LiteralAccordionType]
+    type: Optional[Var[LiteralAccordionType]] = None
 
     # The value of the item to expand.
-    value: Var[Optional[Union[str, List[str]]]]
+    value: Optional[Var[Optional[Union[str, List[str]]]]] = None
 
     # The default value of the item to expand.
-    default_value: Var[Optional[Union[str, List[str]]]]
+    default_value: Optional[Var[Optional[Union[str, List[str]]]]] = None
 
     # Whether or not the accordion is collapsible.
-    collapsible: Var[bool]
+    collapsible: Optional[Var[bool]] = None
 
     # Whether or not the accordion is disabled.
-    disabled: Var[bool]
+    disabled: Optional[Var[bool]] = None
 
     # The reading direction of the accordion when applicable.
-    dir: Var[LiteralAccordionDir]
+    dir: Optional[Var[LiteralAccordionDir]] = None
 
     # The orientation of the accordion.
-    orientation: Var[LiteralAccordionOrientation]
+    orientation: Optional[Var[LiteralAccordionOrientation]] = None
 
     # The variant of the accordion.
     variant: Var[LiteralAccordionRootVariant] = "classic"  # type: ignore
@@ -470,15 +469,15 @@ to {
 class AccordionItem(AccordionComponent):
     """An accordion component."""
 
-    tag = "Item"
+    tag: str = "Item"
 
-    alias = "RadixAccordionItem"
+    alias: str = "RadixAccordionItem"
 
     # A unique identifier for the item.
-    value: Var[str]
+    value: Optional[Var[str]] = None
 
     # When true, prevents the user from interacting with the item.
-    disabled: Var[bool]
+    disabled: Optional[Var[bool]] = None
 
     _valid_children: List[str] = [
         "AccordionHeader",
@@ -539,9 +538,9 @@ class AccordionItem(AccordionComponent):
 class AccordionHeader(AccordionComponent):
     """An accordion component."""
 
-    tag = "Header"
+    tag: str = "Header"
 
-    alias = "RadixAccordionHeader"
+    alias: str = "RadixAccordionHeader"
 
     @classmethod
     def create(cls, *children, **props) -> Component:
@@ -568,9 +567,9 @@ class AccordionHeader(AccordionComponent):
 class AccordionTrigger(AccordionComponent):
     """An accordion component."""
 
-    tag = "Trigger"
+    tag: str = "Trigger"
 
-    alias = "RadixAccordionTrigger"
+    alias: str = "RadixAccordionTrigger"
 
     @classmethod
     def create(cls, *children, **props) -> Component:
@@ -619,9 +618,9 @@ class AccordionIcon(Icon):
 class AccordionContent(AccordionComponent):
     """An accordion component."""
 
-    tag = "Content"
+    tag: str = "Content"
 
-    alias = "RadixAccordionContent"
+    alias: str = "RadixAccordionContent"
 
     @classmethod
     def create(cls, *children, **props) -> Component:

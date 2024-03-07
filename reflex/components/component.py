@@ -1,5 +1,4 @@
 """Base component definitions."""
-
 from __future__ import annotations
 
 import copy
@@ -19,7 +18,11 @@ from typing import (
     Set,
     Type,
     Union,
+    get_args,
 )
+
+from pydantic.fields import ModelPrivateAttr
+from pydantic_core._pydantic_core import PydanticUndefinedType
 
 from reflex.base import Base
 from reflex.compiler.templates import STATEFUL_COMPONENT
@@ -199,33 +202,35 @@ class Component(BaseComponent, ABC):
     _memoization_mode: MemoizationMode = MemoizationMode()
 
     @classmethod
-    def __init_subclass__(cls, **kwargs):
+    def __pydantic_init_subclass__(cls):
         """Set default properties.
 
         Args:
             **kwargs: The kwargs to pass to the superclass.
         """
-        super().__init_subclass__(**kwargs)
-
         # Get all the props for the component.
         props = cls.get_props()
 
         # Convert fields to props, setting default values.
-        for field in cls.get_fields().values():
+        for field_name, field in cls.get_fields().items():
             # If the field is not a component prop, skip it.
-            if field.name not in props:
+            if field_name not in props:
                 continue
 
             # Set default values for any props.
-            if types._issubclass(field.type_, Var):
-                field.required = False
-                field.default = Var.create(field.default)
+            if types._issubclass(field.annotation, Var):
+                # TODO: pydantic v2 AttributeError: 'FieldInfo' object attribute 'is_required' is read-only
+                #  field.is_required = False
+                if not isinstance(field.default, PydanticUndefinedType):
+                    field.default = Var.create(field.default)
 
         # Ensure renamed props from parent classes are applied to the subclass.
         if cls._rename_props:
             inherited_rename_props = {}
             for parent in reversed(cls.mro()):
                 if issubclass(parent, Component) and parent._rename_props:
+                    if isinstance(parent._rename_props, ModelPrivateAttr):
+                        parent._rename_props = parent._rename_props.default
                     inherited_rename_props.update(parent._rename_props)
             cls._rename_props = inherited_rename_props
 
@@ -271,10 +276,17 @@ class Component(BaseComponent, ABC):
                 field_type = EventChain
             elif key in props:
                 # Set the field type.
-                field_type = fields[key].type_
+                field_type = fields[key].annotation
 
             else:
                 continue
+
+            # unwrap Optional from field_type
+            field_type = (
+                typing.get_args(field_type)[0]
+                if types.is_optional(field_type)
+                else field_type
+            )
 
             # Check whether the key is a component prop.
             if types._issubclass(field_type, Var):
@@ -286,7 +298,7 @@ class Component(BaseComponent, ABC):
                     if kwargs[key] is None:
                         raise TypeError
 
-                    expected_type = fields[key].outer_type_.__args__[0]
+                    expected_type = get_args(field_type)[0]
                     # validate literal fields.
                     types.validate_literal(
                         key, value, expected_type, type(self).__name__
@@ -301,7 +313,7 @@ class Component(BaseComponent, ABC):
                 except TypeError:
                     # If it is not a valid var, check the base types.
                     passed_type = type(value)
-                    expected_type = fields[key].outer_type_
+                    expected_type = field_type
                 if not types._issubclass(passed_type, expected_type):
                     value_name = value._var_name if isinstance(value, Var) else value
                     raise TypeError(
@@ -581,7 +593,7 @@ class Component(BaseComponent, ABC):
             name
             for name, field in cls.get_fields().items()
             if name in cls.get_props()
-            and types._issubclass(field.outer_type_, Component)
+            and types._issubclass(field.annotation, Component)
         }
 
     @classmethod
@@ -1232,7 +1244,7 @@ class CustomComponent(Component):
     """A custom user-defined component."""
 
     # Use the components library.
-    library = f"/{Dirs.COMPONENTS_PATH}"
+    library: str = f"/{Dirs.COMPONENTS_PATH}"
 
     # The function that creates the component.
     component_fn: Callable[..., Component] = Component.create
@@ -1379,7 +1391,7 @@ class CustomComponent(Component):
 
 
 def custom_component(
-    component_fn: Callable[..., Component]
+    component_fn: Callable[..., Component],
 ) -> Callable[..., CustomComponent]:
     """Create a custom component from a function.
 
@@ -1841,7 +1853,7 @@ class MemoizationLeaf(Component):
         """
         comp = super().create(*children, **props)
         if comp.get_hooks():
-            comp._memoization_mode = cls._memoization_mode.copy(
+            comp._memoization_mode = comp._memoization_mode.model_copy(
                 update={"disposition": MemoizationDisposition.ALWAYS}
             )
         return comp

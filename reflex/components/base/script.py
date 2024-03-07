@@ -1,10 +1,9 @@
 """Next.js script wrappers and inline script functionality.
-
-https://nextjs.org/docs/app/api-reference/components/script
+https://nextjs.org/docs/app/api-reference/components/script.
 """
 from __future__ import annotations
 
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from reflex.components.component import Component
 from reflex.vars import Var
@@ -20,12 +19,12 @@ class Script(Component):
     HTML <script> tag which does not work when rendering a component.
     """
 
-    library = "next/script"
-    tag = "Script"
-    is_default = True
+    library: str = "next/script"
+    tag: str = "Script"
+    is_default: bool = True
 
     # Required unless inline script is used
-    src: Var[str]
+    src: Optional[Var[str]] = None
 
     # When the script will execute: afterInteractive | beforeInteractive | lazyOnload
     strategy: Var[str] = "afterInteractive"  # type: ignore

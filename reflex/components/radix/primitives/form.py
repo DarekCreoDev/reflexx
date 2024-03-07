@@ -1,9 +1,8 @@
 """Radix form component."""
-
 from __future__ import annotations
 
 from hashlib import md5
-from typing import Any, Dict, Iterator, Literal
+from typing import Any, Dict, Iterator, Literal, Optional
 
 from jinja2 import Environment
 
@@ -40,21 +39,21 @@ HANDLE_SUBMIT_JS_JINJA2 = Environment().from_string(
 class FormComponent(RadixPrimitiveComponentWithClassName):
     """Base class for all @radix-ui/react-form components."""
 
-    library = "@radix-ui/react-form@^0.0.3"
+    library: str = "@radix-ui/react-form@^0.0.3"
 
 
 class FormRoot(FormComponent):
     """The root component of a radix form."""
 
-    tag = "Root"
+    tag: str = "Root"
 
-    alias = "RadixFormRoot"
+    alias: str = "RadixFormRoot"
 
     # If true, the form will be cleared after submit.
     reset_on_submit: Var[bool] = False  # type: ignore
 
     # The name used to make this form's submit handler function unique.
-    handle_submit_unique_name: Var[str]
+    handle_submit_unique_name: Optional[Var[str]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Event triggers for radix form root.
@@ -168,15 +167,15 @@ class FormRoot(FormComponent):
 class FormField(FormComponent):
     """A form field component."""
 
-    tag = "Field"
+    tag: str = "Field"
 
-    alias = "RadixFormField"
+    alias: str = "RadixFormField"
 
     # The name of the form field, that is passed down to the control and used to match with validation messages.
-    name: Var[str]
+    name: Optional[Var[str]] = None
 
     # Flag to mark the form field as invalid, for server side validation.
-    server_invalid: Var[bool]
+    server_invalid: Optional[Var[bool]] = None
 
     def _apply_theme(self, theme: Component):
         return {
@@ -189,9 +188,9 @@ class FormField(FormComponent):
 class FormLabel(FormComponent):
     """A form label component."""
 
-    tag = "Label"
+    tag: str = "Label"
 
-    alias = "RadixFormLabel"
+    alias: str = "RadixFormLabel"
 
     def _apply_theme(self, theme: Component):
         return {
@@ -205,9 +204,9 @@ class FormLabel(FormComponent):
 class FormControl(FormComponent):
     """A form control component."""
 
-    tag = "Control"
+    tag: str = "Control"
 
-    alias = "RadixFormControl"
+    alias: str = "RadixFormControl"
 
     @classmethod
     def create(cls, *children, **props):
@@ -253,18 +252,18 @@ LiteralMatcher = Literal[
 class FormMessage(FormComponent):
     """A form message component."""
 
-    tag = "Message"
+    tag: str = "Message"
 
-    alias = "RadixFormMessage"
+    alias: str = "RadixFormMessage"
 
     # Used to target a specific field by name when rendering outside of a Field part.
-    name: Var[str]
+    name: Optional[Var[str]] = None
 
     # Used to indicate on which condition the message should be visible.
-    match: Var[LiteralMatcher]
+    match: Optional[Var[LiteralMatcher]] = None
 
     # Forces the message to be shown. This is useful when using server-side validation.
-    force_match: Var[bool]
+    force_match: Optional[Var[bool]] = None
 
     def _apply_theme(self, theme: Component):
         return {
@@ -278,15 +277,15 @@ class FormMessage(FormComponent):
 class FormValidityState(FormComponent):
     """A form validity state component."""
 
-    tag = "ValidityState"
-    alias = "RadixFormValidityState"
+    tag: str = "ValidityState"
+    alias: str = "RadixFormValidityState"
 
 
 class FormSubmit(FormComponent):
     """A form submit component."""
 
-    tag = "Submit"
-    alias = "RadixFormSubmit"
+    tag: str = "Submit"
+    alias: str = "RadixFormSubmit"
 
 
 # This class is created mainly for reflex-web docs.

@@ -1,5 +1,5 @@
 """Interactive components provided by @radix-ui/themes."""
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Optional
 
 from reflex import el
 from reflex.components.component import ComponentNamespace
@@ -15,13 +15,13 @@ from ..base import (
 class PopoverRoot(RadixThemesComponent):
     """Floating element for displaying rich content, triggered by a button."""
 
-    tag = "Popover.Root"
+    tag: str = "Popover.Root"
 
     # The controlled open state of the popover.
-    open: Var[bool]
+    open: Optional[Var[bool]] = None
 
     # The modality of the popover. When set to true, interaction with outside elements will be disabled and only popover content will be visible to screen readers.
-    modal: Var[bool]
+    modal: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -38,31 +38,31 @@ class PopoverRoot(RadixThemesComponent):
 class PopoverTrigger(RadixThemesTriggerComponent):
     """Wraps the control that will open the popover."""
 
-    tag = "Popover.Trigger"
+    tag: str = "Popover.Trigger"
 
 
 class PopoverContent(el.Div, RadixThemesComponent):
     """Contains content to be rendered in the open popover."""
 
-    tag = "Popover.Content"
+    tag: str = "Popover.Content"
 
     # Size of the button: "1" | "2" | "3" | "4"
-    size: Var[Literal["1", "2", "3", "4"]]
+    size: Optional[Var[Literal["1", "2", "3", "4"]]] = None
 
     # The preferred side of the anchor to render against when open. Will be reversed when collisions occur and avoidCollisions is enabled.
-    side: Var[Literal["top", "right", "bottom", "left"]]
+    side: Optional[Var[Literal["top", "right", "bottom", "left"]]] = None
 
     # The distance in pixels from the anchor.
-    side_offset: Var[int]
+    side_offset: Optional[Var[int]] = None
 
     # The preferred alignment against the anchor. May change when collisions occur.
-    align: Var[Literal["start", "center", "end"]]
+    align: Optional[Var[Literal["start", "center", "end"]]] = None
 
     # The vertical distance in pixels from the anchor.
-    align_offset: Var[int]
+    align_offset: Optional[Var[int]] = None
 
     # When true, overrides the side andalign preferences to prevent collisions with boundary edges.
-    avoid_collisions: Var[bool]
+    avoid_collisions: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -84,7 +84,7 @@ class PopoverContent(el.Div, RadixThemesComponent):
 class PopoverClose(RadixThemesTriggerComponent):
     """Wraps the control that will close the popover."""
 
-    tag = "Popover.Close"
+    tag: str = "Popover.Close"
 
 
 class Popover(ComponentNamespace):

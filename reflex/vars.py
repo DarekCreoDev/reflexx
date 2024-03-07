@@ -32,6 +32,8 @@ from typing import (
     get_type_hints,
 )
 
+import pydantic_core
+
 from reflex import constants
 from reflex.base import Base
 from reflex.utils import console, format, imports, serializers, types
@@ -197,7 +199,7 @@ class VarData(Base):
             "state": self.state,
             "interpolations": list(self.interpolations),
             "imports": {
-                lib: [import_var.dict() for import_var in import_vars]
+                lib: [import_var.model_dump() for import_var in import_vars]
                 for lib, import_vars in self.imports.items()
             },
             "hooks": list(self.hooks),
@@ -219,7 +221,9 @@ def _encode_var(value: Var) -> str:
         final_value = str(value)
         data = value._var_data.dict()
         data["string_length"] = len(final_value)
-        data_json = value._var_data.__config__.json_dumps(data, default=serialize)
+        data_json = value._var_data.__pydantic_serializer__.to_json(
+            value=data, fallback=serialize
+        ).decode()
 
         return (
             f"{constants.REFLEX_VAR_OPENING_TAG}{data_json}{constants.REFLEX_VAR_CLOSING_TAG}"
@@ -253,14 +257,13 @@ def _decode_var(value: str) -> tuple[VarData | None, str]:
 
         offset = 0
 
-        # Initialize some methods for reading json.
-        var_data_config = VarData().__config__
-
         def json_loads(s):
             try:
-                return var_data_config.json_loads(s)
-            except json.decoder.JSONDecodeError:
-                return var_data_config.json_loads(var_data_config.json_loads(f'"{s}"'))
+                # TODO: go one pydantic api level lower to load json directly into dict
+                return VarData.model_validate_json(s).model_dump()
+            except pydantic_core.ValidationError as e:
+                raise ValueError(f"Invalid VarData: {s}") from e
+                #  return VarData.model_validate(var_data_config.json_loads(f'"{s}"'))
 
         # Find all tags.
         while m := _decode_var_pattern.search(value):
@@ -270,7 +273,7 @@ def _decode_var(value: str) -> tuple[VarData | None, str]:
             # Read the JSON, pull out the string length, parse the rest as VarData.
             data = json_loads(m.group(1))
             string_length = data.pop("string_length", None)
-            var_data = VarData.parse_obj(data)
+            var_data = VarData.model_validate(data)
 
             # Use string length to compute positions of interpolations.
             if string_length is not None:

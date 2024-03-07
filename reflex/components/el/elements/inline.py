@@ -1,5 +1,5 @@
 """Element classes. This is an auto-generated file. Do not edit. See ../generate.py."""
-from typing import Union
+from typing import Optional, Union
 
 from reflex.vars import Var
 
@@ -9,202 +9,202 @@ from .base import BaseHTML
 class A(BaseHTML):  # Inherits common attributes from BaseMeta
     """Display the 'a' element."""
 
-    tag = "a"
+    tag: str = "a"
 
     # Specifies that the target (the file specified in the href attribute) will be downloaded when a user clicks on the hyperlink.
-    download: Var[Union[str, int, bool]]
+    download: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies the URL of the page the link goes to
-    href: Var[Union[str, int, bool]]
+    href: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies the language of the linked document
-    href_lang: Var[Union[str, int, bool]]
+    href_lang: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies what media/device the linked document is optimized for
-    media: Var[Union[str, int, bool]]
+    media: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies which referrer is sent when fetching the resource
-    ping: Var[Union[str, int, bool]]
+    ping: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies the relationship between the current document and the linked document
-    referrer_policy: Var[Union[str, int, bool]]
+    referrer_policy: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies the relationship between the linked document and the current document
-    rel: Var[Union[str, int, bool]]
+    rel: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies the shape of the area
-    shape: Var[Union[str, int, bool]]
+    shape: Optional[Var[Union[str, int, bool]]] = None
 
     # Specifies where to open the linked document
-    target: Var[Union[str, int, bool]]
+    target: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Abbr(BaseHTML):
     """Display the abbr element."""
 
-    tag = "abbr"
+    tag: str = "abbr"
 
 
 class B(BaseHTML):
     """Display the b element."""
 
-    tag = "b"
+    tag: str = "b"
 
 
 class Bdi(BaseHTML):
     """Display the bdi element."""
 
-    tag = "bdi"
+    tag: str = "bdi"
 
 
 class Bdo(BaseHTML):
     """Display the bdo element."""
 
-    tag = "bdo"
+    tag: str = "bdo"
 
 
 class Br(BaseHTML):
     """Display the br element."""
 
-    tag = "br"
+    tag: str = "br"
 
 
 class Cite(BaseHTML):
     """Display the cite element."""
 
-    tag = "cite"
+    tag: str = "cite"
 
 
 class Code(BaseHTML):
     """Display the code element."""
 
-    tag = "code"
+    tag: str = "code"
 
 
 class Data(BaseHTML):
     """Display the data element."""
 
-    tag = "data"
+    tag: str = "data"
 
     # Specifies the machine-readable translation of the data element.
-    value: Var[Union[str, int, bool]]
+    value: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Dfn(BaseHTML):
     """Display the dfn element."""
 
-    tag = "dfn"
+    tag: str = "dfn"
 
 
 class Em(BaseHTML):
     """Display the em element."""
 
-    tag = "em"
+    tag: str = "em"
 
 
 class I(BaseHTML):  # noqa: E742
     """Display the i element."""
 
-    tag = "i"
+    tag: str = "i"
 
 
 class Kbd(BaseHTML):
     """Display the kbd element."""
 
-    tag = "kbd"
+    tag: str = "kbd"
 
 
 class Mark(BaseHTML):
     """Display the mark element."""
 
-    tag = "mark"
+    tag: str = "mark"
 
 
 class Q(BaseHTML):
     """Display the q element."""
 
-    tag = "q"
+    tag: str = "q"
 
     # Specifies the source URL of the quote.
-    cite: Var[Union[str, int, bool]]
+    cite: Optional[Var[Union[str, int, bool]]] = None
 
 
 class Rp(BaseHTML):
     """Display the rp element."""
 
-    tag = "rp"
+    tag: str = "rp"
 
 
 class Rt(BaseHTML):
     """Display the rt element."""
 
-    tag = "rt"
+    tag: str = "rt"
 
 
 class Ruby(BaseHTML):
     """Display the ruby element."""
 
-    tag = "ruby"
+    tag: str = "ruby"
 
 
 class S(BaseHTML):
     """Display the s element."""
 
-    tag = "s"
+    tag: str = "s"
 
 
 class Samp(BaseHTML):
     """Display the samp element."""
 
-    tag = "samp"
+    tag: str = "samp"
 
 
 class Small(BaseHTML):
     """Display the small element."""
 
-    tag = "small"
+    tag: str = "small"
 
 
 class Span(BaseHTML):
     """Display the span element."""
 
-    tag = "span"
+    tag: str = "span"
 
 
 class Strong(BaseHTML):
     """Display the strong element."""
 
-    tag = "strong"
+    tag: str = "strong"
 
 
 class Sub(BaseHTML):
     """Display the sub element."""
 
-    tag = "sub"
+    tag: str = "sub"
 
 
 class Sup(BaseHTML):
     """Display the sup element."""
 
-    tag = "sup"
+    tag: str = "sup"
 
 
 class Time(BaseHTML):
     """Display the time element."""
 
-    tag = "time"
+    tag: str = "time"
 
     # Specifies the date and/or time of the element.
-    date_time: Var[Union[str, int, bool]]
+    date_time: Optional[Var[Union[str, int, bool]]] = None
 
 
 class U(BaseHTML):
     """Display the u element."""
 
-    tag = "u"
+    tag: str = "u"
 
 
 class Wbr(BaseHTML):
     """Display the wbr element."""
 
-    tag = "wbr"
+    tag: str = "wbr"

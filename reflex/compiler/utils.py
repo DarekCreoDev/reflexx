@@ -4,8 +4,7 @@ from __future__ import annotations
 import os
 from typing import Any, Callable, Dict, Optional, Type, Union
 from urllib.parse import urlparse
-
-from pydantic.fields import ModelField
+from pydantic.fields import FieldInfo
 
 from reflex import constants
 from reflex.components.base import (
@@ -149,7 +148,7 @@ def compile_state(state: Type[BaseState]) -> dict:
 
 
 def _compile_client_storage_field(
-    field: ModelField,
+    field: FieldInfo,
 ) -> tuple[Type[Cookie] | Type[LocalStorage] | None, dict[str, Any] | None]:
     """Compile the given cookie or local_storage field.
 
@@ -162,8 +161,10 @@ def _compile_client_storage_field(
     for field_type in (Cookie, LocalStorage):
         if isinstance(field.default, field_type):
             cs_obj = field.default
-        elif isinstance(field.type_, type) and issubclass(field.type_, field_type):
-            cs_obj = field.type_()
+        elif isinstance(field.annotation, type) and issubclass(
+            field.annotation, field_type
+        ):
+            cs_obj = field.annotation()
         else:
             continue
         return field_type, cs_obj.options()
@@ -188,7 +189,7 @@ def _compile_client_storage_recursive(
     cookies = {}
     local_storage = {}
     state_name = state.get_full_name()
-    for name, field in state.__fields__.items():
+    for name, field in state.model_fields.items():
         if name in state.inherited_vars:
             # only include vars defined in this state
             continue

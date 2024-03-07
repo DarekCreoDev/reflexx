@@ -1,4 +1,5 @@
 """Breadcrumb components."""
+from typing import Optional
 
 from reflex.components.chakra import ChakraComponent
 from reflex.components.chakra.navigation.link import Link
@@ -10,13 +11,13 @@ from reflex.vars import Var
 class Breadcrumb(ChakraComponent):
     """The parent container for breadcrumbs."""
 
-    tag = "Breadcrumb"
+    tag: str = "Breadcrumb"
 
     # The visual separator between each breadcrumb item
-    separator: Var[str]
+    separator: Optional[Var[str]] = None
 
     # The left and right margin applied to the separator
-    separator_margin: Var[str]
+    separator_margin: Optional[Var[str]] = None
 
     @classmethod
     def create(cls, *children, items=None, **props) -> Component:
@@ -51,19 +52,19 @@ class Breadcrumb(ChakraComponent):
 class BreadcrumbItem(ChakraComponent):
     """Individual breadcrumb element containing a link and a divider."""
 
-    tag = "BreadcrumbItem"
+    tag: str = "BreadcrumbItem"
 
     # Is the current page of the breadcrumb.
-    is_current_page: Var[bool]
+    is_current_page: Optional[Var[bool]] = None
 
     # Is the last child of the breadcrumb.
-    is_last_child: Var[bool]
+    is_last_child: Optional[Var[bool]] = None
 
     # The visual separator between each breadcrumb item
-    separator: Var[str]
+    separator: Optional[Var[str]] = None
 
     # The left and right margin applied to the separator
-    spacing: Var[str]
+    spacing: Optional[Var[str]] = None
 
     @classmethod
     def create(cls, *children, label=None, href=None, **props):
@@ -86,13 +87,13 @@ class BreadcrumbItem(ChakraComponent):
 class BreadcrumbSeparator(ChakraComponent):
     """The visual separator between each breadcrumb."""
 
-    tag = "BreadcrumbSeparator"
+    tag: str = "BreadcrumbSeparator"
 
 
 class BreadcrumbLink(Link):
     """The breadcrumb link."""
 
-    tag = "BreadcrumbLink"
+    tag: str = "BreadcrumbLink"
 
     # Is the current page of the breadcrumb.
-    is_current_page: Var[bool]
+    is_current_page: Optional[Var[bool]] = None

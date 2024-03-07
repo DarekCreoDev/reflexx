@@ -1,5 +1,4 @@
 """Progress."""
-
 from __future__ import annotations
 
 from typing import Optional
@@ -16,17 +15,17 @@ from reflex.vars import Var
 class ProgressComponent(RadixPrimitiveComponentWithClassName):
     """A Progress component."""
 
-    library = "@radix-ui/react-progress@^1.0.3"
+    library: str = "@radix-ui/react-progress@^1.0.3"
 
 
 class ProgressRoot(ProgressComponent):
     """The Progress Root component."""
 
-    tag = "Root"
-    alias = "RadixProgressRoot"
+    tag: str = "Root"
+    alias: str = "RadixProgressRoot"
 
     # Override theme radius for progress bar: "none" | "small" | "medium" | "large" | "full"
-    radius: Var[LiteralRadius]
+    radius: Optional[Var[LiteralRadius]] = None
 
     def _apply_theme(self, theme: Component):
         if self.radius is not None:
@@ -52,18 +51,18 @@ class ProgressRoot(ProgressComponent):
 class ProgressIndicator(ProgressComponent):
     """The Progress bar indicator."""
 
-    tag = "Indicator"
+    tag: str = "Indicator"
 
-    alias = "RadixProgressIndicator"
+    alias: str = "RadixProgressIndicator"
 
     # The current progress value.
-    value: Var[Optional[int]]
+    value: Optional[Var[Optional[int]]] = None
 
     # The maximum progress value.
-    max: Var[Optional[int]]
+    max: Optional[Var[Optional[int]]] = None
 
     # The color scheme of the progress indicator.
-    color_scheme: Var[LiteralAccentColor]
+    color_scheme: Optional[Var[LiteralAccentColor]] = None
 
     def _apply_theme(self, theme: Component):
         if self.color_scheme is not None:
@@ -92,13 +91,13 @@ class Progress(ProgressRoot):
     """The high-level Progress component."""
 
     # Override theme color for progress bar indicator
-    color_scheme: Var[LiteralAccentColor]
+    color_scheme: Optional[Var[LiteralAccentColor]] = None
 
     # The current progress value.
-    value: Var[Optional[int]]
+    value: Optional[Var[Optional[int]]] = None
 
     # The maximum progress value.
-    max: Var[Optional[int]]
+    max: Optional[Var[Optional[int]]] = None
 
     @classmethod
     def create(cls, **props) -> Component:

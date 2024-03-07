@@ -99,5 +99,5 @@ class ColorModeButton(Button):
 class ColorModeScript(ChakraComponent):
     """Chakra color mode script."""
 
-    tag = "ColorModeScript"
-    initialColorMode = LIGHT_COLOR_MODE
+    tag: str = "ColorModeScript"
+    initialColorMode: str = LIGHT_COLOR_MODE

@@ -151,7 +151,12 @@ RESERVED_BACKEND_VAR_NAMES = {
     "_substate_var_dependencies",
     "_always_dirty_computed_vars",
     "_always_dirty_substates",
+    "_abc_impl",  # pydantic v2
     "_was_touched",
+}
+
+SPECIAL_METHODS = {
+    "model_post_init",  # never treat this as an event handler
 }
 
 
@@ -190,7 +195,7 @@ def _split_substate_key(substate_key: str) -> tuple[str, str]:
     return token, state_name
 
 
-class BaseState(Base, ABC, extra=pydantic.Extra.allow):
+class BaseState(Base, ABC, extra="allow"):
     """The state of the app."""
 
     # A map from the var name to the var.
@@ -281,6 +286,15 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
                 "See https://reflex.dev/docs/state/ for further information."
             )
         kwargs["parent_state"] = parent_state
+
+        for prop_name, prop in self.base_vars.items():
+            if (
+                prop_name not in kwargs
+                and prop_name in self.model_fields
+                and self.model_fields[prop_name].is_required()
+            ):
+                kwargs[prop_name] = prop.get_default_value()
+
         super().__init__(*args, **kwargs)
 
         # Setup the substates (for memory state manager only).
@@ -334,7 +348,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         Returns:
             The string representation of the state.
         """
-        return f"{self.__class__.__name__}({self.dict()})"
+        return f"{type(self).__name__}({self.dict()})"
 
     @classmethod
     def _get_computed_vars(cls) -> list[ComputedVar]:
@@ -352,7 +366,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         ]
 
     @classmethod
-    def __init_subclass__(cls, **kwargs):
+    def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
         """Do some magic for the subclass initialization.
 
         Args:
@@ -361,7 +375,6 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         Raises:
             ValueError: If a substate class shadows another.
         """
-        super().__init_subclass__(**kwargs)
         # Event handlers should not shadow builtin state methods.
         cls._check_overridden_methods()
 
@@ -401,8 +414,8 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         computed_vars = cls._get_computed_vars()
 
         new_backend_vars = {
-            name: value
-            for name, value in cls.__dict__.items()
+            name: value.default
+            for name, value in cls.__private_attributes__.items()
             if types.is_backend_variable(name, cls)
             and name not in RESERVED_BACKEND_VAR_NAMES
             and name not in cls.inherited_backend_vars
@@ -426,11 +439,11 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
 
         # Set the base and computed vars.
         cls.base_vars = {
-            f.name: BaseVar(_var_name=f.name, _var_type=f.outer_type_)._var_set_state(
-                cls
-            )
-            for f in cls.get_fields().values()
-            if f.name not in cls.get_skip_vars()
+            field_name: BaseVar(
+                _var_name=field_name, _var_type=field.annotation
+            )._var_set_state(cls)
+            for field_name, field in cls.get_fields().items()
+            if field_name not in cls.get_skip_vars()
         }
         cls.computed_vars = {v._var_name: v._var_set_state(cls) for v in computed_vars}
         cls.vars = {
@@ -476,6 +489,12 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             cls.event_handlers[name] = handler
             setattr(cls, name, handler)
 
+        # Inherited vars are handled in __getattribute__, not by pydantic
+        for prop in cls.model_fields.copy():
+            if prop in cls.inherited_vars or prop in cls.inherited_backend_vars:
+                del cls.model_fields[prop]
+        cls.model_rebuild(force=True)
+
         cls._init_var_dependency_dicts()
 
     @staticmethod
@@ -511,6 +530,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         """
         return (
             not name.startswith("_")
+            and name not in SPECIAL_METHODS
             and isinstance(value, Callable)
             and not isinstance(value, EventHandler)
             and hasattr(value, "__code__")
@@ -738,7 +758,6 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             )
         cls._set_var(prop)
         cls._create_setter(prop)
-        cls._set_default_value(prop)
 
     @classmethod
     def add_var(cls, name: str, type_: Any, default_value: Any = None):
@@ -755,7 +774,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         Raises:
             NameError: if a variable of this name already exists
         """
-        if name in cls.__fields__:
+        if name in cls.model_fields:
             raise NameError(
                 f"The variable '{name}' already exist. Use a different name"
             )
@@ -801,28 +820,6 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             event_handler = EventHandler(fn=prop.get_setter())
             cls.event_handlers[setter_name] = event_handler
             setattr(cls, setter_name, event_handler)
-
-    @classmethod
-    def _set_default_value(cls, prop: BaseVar):
-        """Set the default value for the var.
-
-        Args:
-            prop: The var to set the default value for.
-        """
-        # Get the pydantic field for the var.
-        field = cls.get_fields()[prop._var_name]
-        if field.required:
-            default_value = prop.get_default_value()
-            if default_value is not None:
-                field.required = False
-                field.default = default_value
-        if (
-            not field.required
-            and field.default is None
-            and not types.is_optional(prop._var_type)
-        ):
-            # Ensure frontend uses null coalescing when accessing.
-            prop._var_type = Optional[prop._var_type]
 
     @staticmethod
     def _get_base_functions() -> dict[str, FunctionType]:
@@ -1018,7 +1015,10 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             if parent_state is not None:
                 return getattr(parent_state, name)
 
-        backend_vars = super().__getattribute__("_backend_vars")
+        private_attrs = super().__getattribute__("__pydantic_private__")
+        if private_attrs is None:
+            return super().__getattribute__(name)
+        backend_vars = private_attrs["_backend_vars"]
         if name in backend_vars:
             value = backend_vars[name]
         else:
@@ -1097,10 +1097,12 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         # on the browser also resets the values on the backend.
         fields = self.get_fields()
         for prop_name in self.base_vars:
-            field = fields[prop_name]
+            if not (field := fields.get(prop_name)):
+                # inherited values are reset in the parent state
+                continue
             if isinstance(field.default, ClientStorageBase) or (
-                isinstance(field.type_, type)
-                and issubclass(field.type_, ClientStorageBase)
+                isinstance(field.annotation, type)
+                and issubclass(field.annotation, ClientStorageBase)
             ):
                 setattr(self, prop_name, copy.deepcopy(field.default))
 
@@ -1618,7 +1620,22 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         self.dirty_vars = set()
         self.dirty_substates = set()
 
-    def get_value(self, key: str) -> Any:
+    def get_value(self, value: Any) -> Any:
+        """Get the value of a field (without proxying).
+
+        The returned value will NOT track dirty state updates.
+
+        Args:
+            value: The value of the field.
+
+        Returns:
+            The value of the field.
+        """
+        if isinstance(value, MutableProxy):
+            return super().get_value(value.__wrapped__)
+        return super().get_value(value)
+
+    def _get_value(self, value: Any, **kwargs) -> Any:
         """Get the value of a field (without proxying).
 
         The returned value will NOT track dirty state updates.
@@ -1629,9 +1646,9 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         Returns:
             The value of the field.
         """
-        if isinstance(key, MutableProxy):
-            return super().get_value(key.__wrapped__)
-        return super().get_value(key)
+        if isinstance(value, MutableProxy):
+            return super()._get_value(value.__wrapped__, **kwargs)
+        return super()._get_value(value, **kwargs)
 
     def dict(
         self, include_computed: bool = True, initial: bool = False, **kwargs
@@ -1772,7 +1789,7 @@ class OnLoadInternalState(State):
         # Do not app.compile_()!  It should be already compiled by now.
         app = getattr(prerequisites.get_app(), constants.CompileVars.APP)
         load_events = app.get_load_events(self.router.page.path)
-        if not load_events and self.is_hydrated:
+        if not load_events and self.is_hydrated is True:
             return  # Fast path for page-to-page navigation
         if not load_events:
             self.is_hydrated = True
@@ -2086,12 +2103,19 @@ class StateManagerMemory(StateManager):
     # The dict of mutexes for each client
     _states_locks: Dict[str, asyncio.Lock] = pydantic.PrivateAttr({})
 
-    class Config:
-        """The Pydantic config."""
-
-        fields = {
-            "_states_locks": {"exclude": True},
-        }
+    # Pydantic config
+    model_config = pydantic.ConfigDict(
+        arbitrary_types_allowed=True,
+        use_enum_values=True,
+        extra="allow",
+        #  json_encoders = {
+        #      MutableProxy: lambda v: v.__wrapped__, # this is currently done in _get_value
+        #  }
+        # TODO: pydantic v2
+        #  fields = {
+        #      "_states_locks": {"exclude": True},
+        #  }
+    )
 
     async def get_state(self, token: str) -> BaseState:
         """Get the state for a token.

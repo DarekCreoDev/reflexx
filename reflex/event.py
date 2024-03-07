@@ -16,6 +16,8 @@ from typing import (
     Union,
 )
 
+from pydantic import ConfigDict
+
 from reflex import constants
 from reflex.base import Base
 from reflex.utils import console, format
@@ -125,7 +127,7 @@ class EventActionsMixin(Base):
         Returns:
             New EventHandler-like with stopPropagation set to True.
         """
-        return self.copy(
+        return self.model_copy(
             update={"event_actions": {"stopPropagation": True, **self.event_actions}},
         )
 
@@ -136,7 +138,7 @@ class EventActionsMixin(Base):
         Returns:
             New EventHandler-like with preventDefault set to True.
         """
-        return self.copy(
+        return self.model_copy(
             update={"event_actions": {"preventDefault": True, **self.event_actions}},
         )
 
@@ -147,11 +149,10 @@ class EventHandler(EventActionsMixin):
     # The function to call in response to the event.
     fn: Any
 
-    class Config:
-        """The Pydantic config."""
-
-        # Needed to allow serialization of Callable.
-        frozen = True
+    # Pydantic config
+    model_config = ConfigDict(
+        frozen=True,  # Needed to allow serialization of Callable.
+    )
 
     @property
     def is_background(self) -> bool:
@@ -216,13 +217,13 @@ class EventSpec(EventActionsMixin):
     client_handler_name: str = ""
 
     # The arguments to pass to the function.
-    args: Tuple[Tuple[Var, Var], ...] = ()
+    # TODO: pydantic v2 add rx.Var type annotation?
+    args: Tuple[Tuple[Any, Any], ...] = ()
 
-    class Config:
-        """The Pydantic config."""
-
-        # Required to allow tuple fields.
-        frozen = True
+    # Pydantic config
+    model_config = ConfigDict(
+        frozen=True,  # Required to allow tuple fields.
+    )
 
     def with_args(self, args: Tuple[Tuple[Var, Var], ...]) -> EventSpec:
         """Copy the event spec, with updated args.
@@ -261,7 +262,7 @@ class CallableEventSpec(EventSpec):
             default_event_spec = fn()
             super().__init__(
                 fn=fn,  # type: ignore
-                **default_event_spec.dict(),
+                **default_event_spec.model_dump(),
                 **kwargs,
             )
         else:

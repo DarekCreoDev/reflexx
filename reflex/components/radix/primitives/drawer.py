@@ -17,7 +17,7 @@ from reflex.vars import Var
 class DrawerComponent(RadixPrimitiveComponent):
     """A Drawer component."""
 
-    library = "vaul"
+    library: str = "vaul"
 
     lib_dependencies: List[str] = ["@radix-ui/react-dialog@^1.0.5"]
 
@@ -28,36 +28,36 @@ LiteralDirectionType = Literal["top", "bottom", "left", "right"]
 class DrawerRoot(DrawerComponent):
     """The Root component of a Drawer, contains all parts of a drawer."""
 
-    tag = "Drawer.Root"
+    tag: str = "Drawer.Root"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Whether the drawer is open or not.
-    open: Var[bool]
+    open: Optional[Var[bool]] = None
 
     # Enable background scaling, it requires an element with [vaul-drawer-wrapper] data attribute to scale its background.
-    should_scale_background: Var[bool]
+    should_scale_background: Optional[Var[bool]] = None
 
     # Number between 0 and 1 that determines when the drawer should be closed.
-    close_threshold: Var[float]
+    close_threshold: Optional[Var[float]] = None
 
     # Array of numbers from 0 to 100 that corresponds to % of the screen a given snap point should take up. Should go from least visible. Also Accept px values, which doesn't take screen height into account.
     snap_points: Optional[List[Union[str, float]]]
 
     # Index of a snapPoint from which the overlay fade should be applied. Defaults to the last snap point.
-    fade_from_index: Var[int]
+    fade_from_index: Optional[Var[int]] = None
 
     # Duration for which the drawer is not draggable after scrolling content inside of the drawer. Defaults to 500ms
-    scroll_lock_timeout: Var[int]
+    scroll_lock_timeout: Optional[Var[int]] = None
 
     # When `False`, it allows to interact with elements outside of the drawer without closing it. Defaults to `True`.
-    modal: Var[bool]
+    modal: Optional[Var[bool]] = None
 
     # Direction of the drawer. Defaults to `"bottom"`
-    direction: Var[LiteralDirectionType]
+    direction: Optional[Var[LiteralDirectionType]] = None
 
     # When `True`, it prevents scroll restoration. Defaults to `True`.
-    preventScrollRestoration: Var[bool]
+    preventScrollRestoration: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the event triggers that pass the component's value to the handler.
@@ -74,9 +74,9 @@ class DrawerRoot(DrawerComponent):
 class DrawerTrigger(DrawerComponent):
     """The button that opens the dialog."""
 
-    tag = "Drawer.Trigger"
+    tag: str = "Drawer.Trigger"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Defaults to true, if the first child acts as the trigger.
     as_child: Var[bool] = True  # type: ignore
@@ -102,18 +102,18 @@ class DrawerTrigger(DrawerComponent):
 class DrawerPortal(DrawerComponent):
     """Portals your drawer into the body."""
 
-    tag = "Drawer.Portal"
+    tag: str = "Drawer.Portal"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
 
 # Based on https://www.radix-ui.com/primitives/docs/components/dialog#content
 class DrawerContent(DrawerComponent):
     """Content that should be rendered in the drawer."""
 
-    tag = "Drawer.Content"
+    tag: str = "Drawer.Content"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Style set partially based on the source code at https://ui.shadcn.com/docs/components/drawer
     def _get_style(self) -> dict:
@@ -175,9 +175,9 @@ class DrawerContent(DrawerComponent):
 class DrawerOverlay(DrawerComponent):
     """A layer that covers the inert portion of the view when the dialog is open."""
 
-    tag = "Drawer.Overlay"
+    tag: str = "Drawer.Overlay"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Style set based on the source code at https://ui.shadcn.com/docs/components/drawer
     def _get_style(self) -> dict:
@@ -203,17 +203,17 @@ class DrawerOverlay(DrawerComponent):
 class DrawerClose(DrawerTrigger):
     """A button that closes the drawer."""
 
-    tag = "Drawer.Close"
+    tag: str = "Drawer.Close"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
 
 class DrawerTitle(DrawerComponent):
     """A title for the drawer."""
 
-    tag = "Drawer.Title"
+    tag: str = "Drawer.Title"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Style set based on the source code at https://ui.shadcn.com/docs/components/drawer
     def _get_style(self) -> dict:
@@ -236,9 +236,9 @@ class DrawerTitle(DrawerComponent):
 class DrawerDescription(DrawerComponent):
     """A description for the drawer."""
 
-    tag = "Drawer.Description"
+    tag: str = "Drawer.Description"
 
-    alias = "Vaul" + tag
+    alias: str = "Vaul" + tag
 
     # Style set based on the source code at https://ui.shadcn.com/docs/components/drawer
     def _get_style(self) -> dict:

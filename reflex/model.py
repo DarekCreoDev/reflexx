@@ -57,18 +57,17 @@ class Model(Base, sqlmodel.SQLModel):
     # The primary key for the table.
     id: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
 
-    def __init_subclass__(cls):
+    @classmethod
+    def __pydantic_init_subclass__(cls):
         """Drop the default primary key field if any primary key field is defined."""
         non_default_primary_key_fields = [
             field_name
-            for field_name, field in cls.__fields__.items()
-            if field_name != "id"
-            and getattr(field.field_info, "primary_key", None) is True
+            for field_name, field in cls.model_fields.items()
+            if field_name != "id" and getattr(field, "primary_key", None) is True
         ]
         if non_default_primary_key_fields:
-            cls.__fields__.pop("id", None)
-
-        super().__init_subclass__()
+            cls.model_fields.pop("id", None)
+            cls.model_rebuild(force=True)
 
     @classmethod
     def _dict_recursive(cls, value):
@@ -95,9 +94,9 @@ class Model(Base, sqlmodel.SQLModel):
         Returns:
             The object as a dictionary.
         """
-        base_fields = {name: getattr(self, name) for name in self.__fields__}
+        base_fields = {name: getattr(self, name) for name in self.model_fields}
         relationships = {}
-        # SQLModel relationships do not appear in __fields__, but should be included if present.
+        # SQLModel relationships do not appear in model_fields, but should be included if present.
         for name in self.__sqlmodel_relationships__:
             try:
                 relationships[name] = self._dict_recursive(getattr(self, name))

@@ -1,5 +1,4 @@
 """A component to indicate progress through a multi-step process."""
-
 from typing import List, Literal, Optional, Tuple
 
 from reflex.components.chakra import ChakraComponent, LiteralColorScheme
@@ -10,21 +9,21 @@ from reflex.vars import Var
 class Stepper(ChakraComponent):
     """The parent container for a stepper."""
 
-    tag = "Stepper"
+    tag: str = "Stepper"
 
-    orientation: Var[Literal["vertical", "horizontal"]]
+    orientation: Optional[Var[Literal["vertical", "horizontal"]]] = None
 
     # The color scheme to use for the stepper; default is blue.
-    colorScheme: Var[LiteralColorScheme]
+    colorScheme: Optional[Var[LiteralColorScheme]] = None
 
     # Chakra provides a useSteps hook to control the stepper.
     # Instead, use an integer state value to set progress in the stepper.
 
     # The index of the current step.
-    index: Var[int]
+    index: Optional[Var[int]] = None
 
     # The size of the steps in the stepper.
-    size: Var[str]
+    size: Optional[Var[str]] = None
 
     @classmethod
     def create(
@@ -58,37 +57,37 @@ class Stepper(ChakraComponent):
 class Step(ChakraComponent):
     """A component for an individual step in the stepper."""
 
-    tag = "Step"
+    tag: str = "Step"
 
 
 class StepDescription(ChakraComponent):
     """The description text for a step component."""
 
-    tag = "StepDescription"
+    tag: str = "StepDescription"
 
 
 class StepIcon(ChakraComponent):
     """The icon displayed in a step indicator component."""
 
-    tag = "StepIcon"
+    tag: str = "StepIcon"
 
 
 class StepIndicator(ChakraComponent):
     """The component displaying the status of a step."""
 
-    tag = "StepIndicator"
+    tag: str = "StepIndicator"
 
 
 class StepNumber(ChakraComponent):
     """The number of a step displayed in a step indicator component."""
 
-    tag = "StepNumber"
+    tag: str = "StepNumber"
 
 
 class StepSeparator(ChakraComponent):
     """The component separting steps."""
 
-    tag = "StepSeparator"
+    tag: str = "StepSeparator"
 
 
 class StepStatus(ChakraComponent):
@@ -98,16 +97,16 @@ class StepStatus(ChakraComponent):
     # active, complete, and incomplete should also be able to accept StepIcon or StepNumber components
     # currently, these props only support strings
 
-    active: Var[str]
+    active: Optional[Var[str]] = None
 
-    complete: Var[str]
+    complete: Optional[Var[str]] = None
 
-    incomplete: Var[str]
+    incomplete: Optional[Var[str]] = None
 
-    tag = "StepStatus"
+    tag: str = "StepStatus"
 
 
 class StepTitle(ChakraComponent):
     """The title text for a step component."""
 
-    tag = "StepTitle"
+    tag: str = "StepTitle"

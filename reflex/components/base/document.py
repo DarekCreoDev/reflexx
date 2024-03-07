@@ -8,30 +8,30 @@ from reflex.components.component import Component
 class NextDocumentLib(Component):
     """Root document components."""
 
-    library = "next/document"
+    library: str = "next/document"
 
 
 class Html(NextDocumentLib):
     """The document html."""
 
-    tag = "Html"
+    tag: str = "Html"
 
-    lang: Optional[str]
+    lang: Optional[str] = None
 
 
 class DocumentHead(NextDocumentLib):
     """The document head."""
 
-    tag = "Head"
+    tag: str = "Head"
 
 
 class Main(NextDocumentLib):
     """The document main section."""
 
-    tag = "Main"
+    tag: str = "Main"
 
 
 class NextScript(NextDocumentLib):
     """The document main scripts."""
 
-    tag = "NextScript"
+    tag: str = "NextScript"

@@ -1,5 +1,4 @@
 """Container to stack elements with spacing."""
-
 from typing import List, Optional, Union
 
 from reflex.components.chakra import ChakraComponent
@@ -10,22 +9,22 @@ from reflex.vars import Var
 class Accordion(ChakraComponent):
     """The wrapper that uses cloneElement to pass props to AccordionItem children."""
 
-    tag = "Accordion"
+    tag: str = "Accordion"
 
     # If true, multiple accordion items can be expanded at once.
-    allow_multiple: Var[bool]
+    allow_multiple: Optional[Var[bool]] = None
 
     # If true, any expanded accordion item can be collapsed again.
-    allow_toggle: Var[bool]
+    allow_toggle: Optional[Var[bool]] = None
 
     # The initial index(es) of the expanded accordion item(s).
-    default_index: Var[Optional[List[int]]]
+    default_index: Optional[Var[Optional[List[int]]]] = None
 
     # The index(es) of the expanded accordion item
-    index: Var[Union[int, List[int]]]
+    index: Optional[Var[Union[int, List[int]]]] = None
 
     # If true, height animation and transitions will be disabled.
-    reduce_motion: Var[bool]
+    reduce_motion: Optional[Var[bool]] = None
 
     @classmethod
     def create(
@@ -80,31 +79,31 @@ class Accordion(ChakraComponent):
 class AccordionItem(ChakraComponent):
     """A single accordion item."""
 
-    tag = "AccordionItem"
+    tag: str = "AccordionItem"
 
     # A unique id for the accordion item.
-    id_: Var[str]
+    id_: Optional[Var[str]] = None
 
     # If true, the accordion item will be disabled.
-    is_disabled: Var[bool]
+    is_disabled: Optional[Var[bool]] = None
 
     # If true, the accordion item will be focusable.
-    is_focusable: Var[bool]
+    is_focusable: Optional[Var[bool]] = None
 
 
 class AccordionButton(ChakraComponent):
     """The button that toggles the expand/collapse state of the accordion item. This button must be wrapped in an element with role heading."""
 
-    tag = "AccordionButton"
+    tag: str = "AccordionButton"
 
 
 class AccordionPanel(ChakraComponent):
     """The container for the details to be revealed."""
 
-    tag = "AccordionPanel"
+    tag: str = "AccordionPanel"
 
 
 class AccordionIcon(ChakraComponent):
     """A chevron-down icon that rotates based on the expanded/collapsed state."""
 
-    tag = "AccordionIcon"
+    tag: str = "AccordionIcon"

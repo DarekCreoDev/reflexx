@@ -1,5 +1,4 @@
 """Chakra Card component."""
-
 from typing import Optional
 
 from reflex.components.chakra import (
@@ -15,51 +14,51 @@ from reflex.vars import Var
 class CardHeader(ChakraComponent):
     """The wrapper that contains a card's header."""
 
-    tag = "CardHeader"
+    tag: str = "CardHeader"
 
 
 class CardBody(ChakraComponent):
     """The wrapper that houses the card's main content."""
 
-    tag = "CardBody"
+    tag: str = "CardBody"
 
 
 class CardFooter(ChakraComponent):
     """The footer that houses the card actions."""
 
-    tag = "CardFooter"
+    tag: str = "CardFooter"
 
 
 class Card(ChakraComponent):
     """The parent wrapper that provides context for its children."""
 
-    tag = "Card"
+    tag: str = "Card"
 
     # [required] The flex alignment of the card
-    align: Var[str]
+    align: Optional[Var[str]] = None
 
     # [required] The flex direction of the card
-    direction: Var[str]
+    direction: Optional[Var[str]] = None
 
     # [required] The flex distribution of the card
-    justify: Var[str]
+    justify: Optional[Var[str]] = None
 
     # The visual color appearance of the component.
     # options: "whiteAlpha" | "blackAlpha" | "gray" | "red" | "orange" | "yellow" |
     #  "green" | "teal" | "blue" | "cyan" | "purple" | "pink" | "linkedin" |
     #  "facebook" | "messenger" | "whatsapp" | "twitter" | "telegram"
     # default: "gray"
-    color_scheme: Var[LiteralColorScheme]
+    color_scheme: Optional[Var[LiteralColorScheme]] = None
 
     # The size of the Card
     # options: "sm" | "md" | "lg"
     # default: "md"
-    size: Var[LiteralTagSize]
+    size: Optional[Var[LiteralTagSize]] = None
 
     # The variant of the Card
     # options: "elevated" | "outline" | "filled" | "unstyled"
     # default: "elevated"
-    variant: Var[LiteralCardVariant]
+    variant: Optional[Var[LiteralCardVariant]] = None
 
     @classmethod
     def create(

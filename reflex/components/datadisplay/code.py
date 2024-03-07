@@ -348,11 +348,11 @@ LiteralCodeLanguage = Literal[
 class CodeBlock(Component):
     """A code block."""
 
-    library = "react-syntax-highlighter@15.5.0"
+    library: str = "react-syntax-highlighter@15.5.0"
 
-    tag = "PrismAsyncLight"
+    tag: str = "PrismAsyncLight"
 
-    alias = "SyntaxHighlighter"
+    alias: str = "SyntaxHighlighter"
 
     # The theme to use ("light" or "dark").
     theme: Var[LiteralCodeBlockTheme] = "one-light"  # type: ignore
@@ -361,22 +361,22 @@ class CodeBlock(Component):
     language: Var[LiteralCodeLanguage] = "python"  # type: ignore
 
     # The code to display.
-    code: Var[str]
+    code: Optional[Var[str]] = None
 
     # If this is enabled line numbers will be shown next to the code block.
-    show_line_numbers: Var[bool]
+    show_line_numbers: Optional[Var[bool]] = None
 
     # The starting line number to use.
-    starting_line_number: Var[int]
+    starting_line_number: Optional[Var[int]] = None
 
     # Whether to wrap long lines.
-    wrap_long_lines: Var[bool]
+    wrap_long_lines: Optional[Var[bool]] = None
 
     # A custom style for the code block.
     custom_style: Dict[str, str] = {}
 
     # Props passed down to the code tag.
-    code_tag_props: Var[Dict[str, str]]
+    code_tag_props: Optional[Var[Dict[str, str]]] = None
 
     def _get_imports(self) -> imports.ImportDict:
         merged_imports = super()._get_imports()

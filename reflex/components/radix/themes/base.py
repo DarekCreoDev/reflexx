@@ -1,8 +1,7 @@
 """Base classes for radix-themes components."""
-
 from __future__ import annotations
 
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Optional, Union
 
 from reflex.components import Component
 from reflex.components.tags import Tag
@@ -52,31 +51,31 @@ class CommonMarginProps(Component):
     """Many radix-themes elements accept shorthand margin props."""
 
     # Margin: "0" - "9"
-    m: Var[LiteralSpacing]
+    m: Optional[Var[LiteralSpacing]] = None
 
     # Margin horizontal: "0" - "9"
-    mx: Var[LiteralSpacing]
+    mx: Optional[Var[LiteralSpacing]] = None
 
     # Margin vertical: "0" - "9"
-    my: Var[LiteralSpacing]
+    my: Optional[Var[LiteralSpacing]] = None
 
     # Margin top: "0" - "9"
-    mt: Var[LiteralSpacing]
+    mt: Optional[Var[LiteralSpacing]] = None
 
     # Margin right: "0" - "9"
-    mr: Var[LiteralSpacing]
+    mr: Optional[Var[LiteralSpacing]] = None
 
     # Margin bottom: "0" - "9"
-    mb: Var[LiteralSpacing]
+    mb: Optional[Var[LiteralSpacing]] = None
 
     # Margin left: "0" - "9"
-    ml: Var[LiteralSpacing]
+    ml: Optional[Var[LiteralSpacing]] = None
 
 
 class RadixThemesComponent(Component):
     """Base class for all @radix-ui/themes components."""
 
-    library = "@radix-ui/themes@^2.0.0"
+    library: str = "@radix-ui/themes@^2.0.0"
 
     # "Fake" prop color_scheme is used to avoid shadowing CSS prop "color".
     _rename_props: Dict[str, str] = {"colorScheme": "color"}
@@ -101,7 +100,7 @@ class RadixThemesComponent(Component):
         """
         component = super().create(*children, **props)
         if component.library is None:
-            component.library = RadixThemesComponent.__fields__["library"].default
+            component.library = RadixThemesComponent.model_fields["library"].default
         component.alias = "RadixThemes" + (
             component.tag or component.__class__.__name__
         )
@@ -153,28 +152,28 @@ class Theme(RadixThemesComponent):
     child elements as an override of the main theme.
     """
 
-    tag = "Theme"
+    tag: str = "Theme"
 
     # Whether to apply the themes background color to the theme node. Defaults to True.
-    has_background: Var[bool]
+    has_background: Optional[Var[bool]] = None
 
     # Override light or dark mode theme: "inherit" | "light" | "dark". Defaults to "inherit".
-    appearance: Var[LiteralAppearance]
+    appearance: Optional[Var[LiteralAppearance]] = None
 
     # The color used for default buttons, typography, backgrounds, etc
-    accent_color: Var[LiteralAccentColor]
+    accent_color: Optional[Var[LiteralAccentColor]] = None
 
     # The shade of gray, defaults to "auto".
-    gray_color: Var[LiteralGrayColor]
+    gray_color: Optional[Var[LiteralGrayColor]] = None
 
     # Whether panel backgrounds are translucent: "solid" | "translucent" (default)
-    panel_background: Var[LiteralPanelBackground]
+    panel_background: Optional[Var[LiteralPanelBackground]] = None
 
     # Element border radius: "none" | "small" | "medium" | "large" | "full". Defaults to "medium".
-    radius: Var[LiteralRadius]
+    radius: Optional[Var[LiteralRadius]] = None
 
     # Scale of all theme items: "90%" | "95%" | "100%" | "105%" | "110%". Defaults to "100%"
-    scaling: Var[LiteralScaling]
+    scaling: Optional[Var[LiteralScaling]] = None
 
     @classmethod
     def create(
@@ -182,6 +181,7 @@ class Theme(RadixThemesComponent):
         *children,
         color_mode: LiteralAppearance | None = None,
         theme_panel: bool = False,
+        accent_color: Union[LiteralAccentColor, Var[LiteralAccentColor]] | None = None,
         **props,
     ) -> Component:
         """Create a new Radix Theme specification.
@@ -199,6 +199,9 @@ class Theme(RadixThemesComponent):
             props["appearance"] = color_mode
         if theme_panel:
             children = [ThemePanel.create(), *children]
+        if not isinstance(accent_color, Var):
+            accent_color = Var.create(accent_color)
+        props["accent_color"] = accent_color
         return super().create(*children, **props)
 
     def _get_imports(self) -> imports.ImportDict:
@@ -231,10 +234,10 @@ class ThemePanel(RadixThemesComponent):
     Include as a child component of Theme to use in your app.
     """
 
-    tag = "ThemePanel"
+    tag: str = "ThemePanel"
 
     # Whether the panel is open. Defaults to False.
-    default_open: Var[bool]
+    default_open: Optional[Var[bool]] = None
 
     def _get_imports(self) -> dict[str, list[imports.ImportVar]]:
         return imports.merge_imports(
@@ -261,9 +264,9 @@ class ThemePanel(RadixThemesComponent):
 class RadixThemesColorModeProvider(Component):
     """Next-themes integration for radix themes components."""
 
-    library = "/components/reflex/radix_themes_color_mode_provider.js"
-    tag = "RadixThemesColorModeProvider"
-    is_default = True
+    library: str = "/components/reflex/radix_themes_color_mode_provider.js"
+    tag: str = "RadixThemesColorModeProvider"
+    is_default: bool = True
 
 
 theme = Theme.create

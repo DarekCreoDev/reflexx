@@ -1,6 +1,5 @@
 """Component for displaying a plotly graph."""
-
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from reflex.components.component import NoSSRComponent
 from reflex.vars import Var
@@ -14,7 +13,7 @@ except ImportError:
 class PlotlyLib(NoSSRComponent):
     """A component that wraps a plotly lib."""
 
-    library = "react-plotly.js@2.6.0"
+    library: str = "react-plotly.js@2.6.0"
 
     lib_dependencies: List[str] = ["plotly.js@2.22.0"]
 
@@ -22,24 +21,24 @@ class PlotlyLib(NoSSRComponent):
 class Plotly(PlotlyLib):
     """Display a plotly graph."""
 
-    tag = "Plot"
+    tag: str = "Plot"
 
-    is_default = True
+    is_default: bool = True
 
     # The figure to display. This can be a plotly figure or a plotly data json.
-    data: Var[Figure]
+    data: Optional[Var[Figure]] = None
 
     # The layout of the graph.
-    layout: Var[Dict]
+    layout: Optional[Var[Dict]] = None
 
     # The config of the graph.
-    config: Var[Dict]
+    config: Optional[Var[Dict]] = None
 
     # The width of the graph.
-    width: Var[str]
+    width: Optional[Var[str]] = None
 
     # The height of the graph.
-    height: Var[str]
+    height: Optional[Var[str]] = None
 
     # If true, the graph will resize when the window is resized.
-    use_resize_handler: Var[bool]
+    use_resize_handler: Optional[Var[bool]] = None

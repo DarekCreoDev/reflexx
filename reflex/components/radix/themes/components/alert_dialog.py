@@ -1,5 +1,5 @@
 """Interactive components provided by @radix-ui/themes."""
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Optional
 
 from reflex import el
 from reflex.components.component import ComponentNamespace
@@ -14,10 +14,10 @@ LiteralContentSize = Literal["1", "2", "3", "4"]
 class AlertDialogRoot(RadixThemesComponent):
     """Contains all the parts of the dialog."""
 
-    tag = "AlertDialog.Root"
+    tag: str = "AlertDialog.Root"
 
     # The controlled open state of the dialog.
-    open: Var[bool]
+    open: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -34,19 +34,19 @@ class AlertDialogRoot(RadixThemesComponent):
 class AlertDialogTrigger(RadixThemesTriggerComponent):
     """Wraps the control that will open the dialog."""
 
-    tag = "AlertDialog.Trigger"
+    tag: str = "AlertDialog.Trigger"
 
 
 class AlertDialogContent(el.Div, RadixThemesComponent):
     """Contains the content of the dialog. This component is based on the div element."""
 
-    tag = "AlertDialog.Content"
+    tag: str = "AlertDialog.Content"
 
     # The size of the content.
-    size: Var[LiteralContentSize]
+    size: Optional[Var[LiteralContentSize]] = None
 
     # Whether to force mount the content on open.
-    force_mount: Var[bool]
+    force_mount: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -68,7 +68,7 @@ class AlertDialogTitle(RadixThemesComponent):
     leading trim on top.
     """
 
-    tag = "AlertDialog.Title"
+    tag: str = "AlertDialog.Title"
 
 
 class AlertDialogDescription(RadixThemesComponent):
@@ -76,7 +76,7 @@ class AlertDialogDescription(RadixThemesComponent):
     This part is based on the Text component with a pre-defined font size.
     """
 
-    tag = "AlertDialog.Description"
+    tag: str = "AlertDialog.Description"
 
 
 class AlertDialogAction(RadixThemesTriggerComponent):
@@ -84,7 +84,7 @@ class AlertDialogAction(RadixThemesTriggerComponent):
     visually from the Cancel control.
     """
 
-    tag = "AlertDialog.Action"
+    tag: str = "AlertDialog.Action"
 
 
 class AlertDialogCancel(RadixThemesTriggerComponent):
@@ -92,7 +92,7 @@ class AlertDialogCancel(RadixThemesTriggerComponent):
     visually from the Action control.
     """
 
-    tag = "AlertDialog.Cancel"
+    tag: str = "AlertDialog.Cancel"
 
 
 class AlertDialog(ComponentNamespace):

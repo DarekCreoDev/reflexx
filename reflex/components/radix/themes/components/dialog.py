@@ -1,6 +1,5 @@
 """Interactive components provided by @radix-ui/themes."""
-
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Optional
 
 from reflex import el
 from reflex.components.component import ComponentNamespace
@@ -16,10 +15,10 @@ from ..base import (
 class DialogRoot(RadixThemesComponent):
     """Root component for Dialog."""
 
-    tag = "Dialog.Root"
+    tag: str = "Dialog.Root"
 
     # The controlled open state of the dialog.
-    open: Var[bool]
+    open: Optional[Var[bool]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -36,22 +35,22 @@ class DialogRoot(RadixThemesComponent):
 class DialogTrigger(RadixThemesTriggerComponent):
     """Trigger an action or event, to open a Dialog modal."""
 
-    tag = "Dialog.Trigger"
+    tag: str = "Dialog.Trigger"
 
 
 class DialogTitle(RadixThemesComponent):
     """Title component to display inside a Dialog modal."""
 
-    tag = "Dialog.Title"
+    tag: str = "Dialog.Title"
 
 
 class DialogContent(el.Div, RadixThemesComponent):
     """Content component to display inside a Dialog modal."""
 
-    tag = "Dialog.Content"
+    tag: str = "Dialog.Content"
 
     # DialogContent size "1" - "4"
-    size: Var[Literal["1", "2", "3", "4"]]
+    size: Optional[Var[Literal["1", "2", "3", "4"]]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Get the events triggers signatures for the component.
@@ -72,13 +71,13 @@ class DialogContent(el.Div, RadixThemesComponent):
 class DialogDescription(RadixThemesComponent):
     """Description component to display inside a Dialog modal."""
 
-    tag = "Dialog.Description"
+    tag: str = "Dialog.Description"
 
 
 class DialogClose(RadixThemesTriggerComponent):
     """Close button component to close an open Dialog modal."""
 
-    tag = "Dialog.Close"
+    tag: str = "Dialog.Close"
 
 
 class Dialog(ComponentNamespace):

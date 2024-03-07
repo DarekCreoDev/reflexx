@@ -1,11 +1,10 @@
 """Components for rendering text.
-
-https://www.radix-ui.com/themes/docs/theme/typography
+from typing import Optional
+https://www.radix-ui.com/themes/docs/theme/typography.
 """
-
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 from reflex import el
 from reflex.components.component import ComponentNamespace
@@ -47,31 +46,31 @@ LiteralType = Literal[
 class Text(el.Span, RadixThemesComponent):
     """A foundational text primitive based on the <span> element."""
 
-    tag = "Text"
+    tag: str = "Text"
 
     # Change the default rendered element for the one passed as a child, merging their props and behavior.
-    as_child: Var[bool]
+    as_child: Optional[Var[bool]] = None
 
     # Change the default rendered element into a semantically appropriate alternative (cannot be used with asChild)
     as_: Var[LiteralType] = "p"  # type: ignore
 
     # Text size: "1" - "9"
-    size: Var[LiteralTextSize]
+    size: Optional[Var[LiteralTextSize]] = None
 
     # Thickness of text: "light" | "regular" | "medium" | "bold"
-    weight: Var[LiteralTextWeight]
+    weight: Optional[Var[LiteralTextWeight]] = None
 
     # Alignment of text in element: "left" | "center" | "right"
-    align: Var[LiteralTextAlign]
+    align: Optional[Var[LiteralTextAlign]] = None
 
     # Removes the leading trim space: "normal" | "start" | "end" | "both"
-    trim: Var[LiteralTextTrim]
+    trim: Optional[Var[LiteralTextTrim]] = None
 
     # Overrides the accent color inherited from the Theme.
-    color_scheme: Var[LiteralAccentColor]
+    color_scheme: Optional[Var[LiteralAccentColor]] = None
 
     # Whether to render the text with higher contrast color
-    high_contrast: Var[bool]
+    high_contrast: Optional[Var[bool]] = None
 
 
 class Span(Text):
@@ -83,28 +82,28 @@ class Span(Text):
 class Em(el.Em, RadixThemesComponent):
     """Marks text to stress emphasis."""
 
-    tag = "Em"
+    tag: str = "Em"
 
 
 class Kbd(el.Kbd, RadixThemesComponent):
     """Represents keyboard input or a hotkey."""
 
-    tag = "Kbd"
+    tag: str = "Kbd"
 
     # Text size: "1" - "9"
-    size: Var[LiteralTextSize]
+    size: Optional[Var[LiteralTextSize]] = None
 
 
 class Quote(el.Q, RadixThemesComponent):
     """A short inline quotation."""
 
-    tag = "Quote"
+    tag: str = "Quote"
 
 
 class Strong(el.Strong, RadixThemesComponent):
     """Marks text to signify strong importance."""
 
-    tag = "Strong"
+    tag: str = "Strong"
 
 
 class TextNamespace(ComponentNamespace):

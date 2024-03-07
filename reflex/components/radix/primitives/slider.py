@@ -1,8 +1,7 @@
 """Radix slider components."""
-
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List, Literal, Optional
 
 from reflex.components.component import Component, ComponentNamespace
 from reflex.components.radix.primitives.base import RadixPrimitiveComponentWithClassName
@@ -16,36 +15,36 @@ LiteralSliderDir = Literal["ltr", "rtl"]
 class SliderComponent(RadixPrimitiveComponentWithClassName):
     """Base class for all @radix-ui/react-slider components."""
 
-    library = "@radix-ui/react-slider@^1.1.2"
+    library: str = "@radix-ui/react-slider@^1.1.2"
 
 
 class SliderRoot(SliderComponent):
     """The Slider component comtaining all slider parts."""
 
-    tag = "Root"
-    alias = "RadixSliderRoot"
+    tag: str = "Root"
+    alias: str = "RadixSliderRoot"
 
-    default_value: Var[List[int]]
+    default_value: Optional[Var[List[int]]] = None
 
-    value: Var[List[int]]
+    value: Optional[Var[List[int]]] = None
 
-    name: Var[str]
+    name: Optional[Var[str]] = None
 
-    disabled: Var[bool]
+    disabled: Optional[Var[bool]] = None
 
-    orientation: Var[LiteralSliderOrientation]
+    orientation: Optional[Var[LiteralSliderOrientation]] = None
 
-    dir: Var[LiteralSliderDir]
+    dir: Optional[Var[LiteralSliderDir]] = None
 
-    inverted: Var[bool]
+    inverted: Optional[Var[bool]] = None
 
-    min: Var[int]
+    min: Optional[Var[int]] = None
 
-    max: Var[int]
+    max: Optional[Var[int]] = None
 
-    step: Var[int]
+    step: Optional[Var[int]] = None
 
-    min_steps_between_thumbs: Var[int]
+    min_steps_between_thumbs: Optional[Var[int]] = None
 
     def get_event_triggers(self) -> Dict[str, Any]:
         """Event triggers for radix slider primitive.
@@ -82,8 +81,8 @@ class SliderRoot(SliderComponent):
 class SliderTrack(SliderComponent):
     """A Slider Track component."""
 
-    tag = "Track"
-    alias = "RadixSliderTrack"
+    tag: str = "Track"
+    alias: str = "RadixSliderTrack"
 
     def _apply_theme(self, theme: Component):
         self.style = Style(
@@ -104,8 +103,8 @@ class SliderTrack(SliderComponent):
 class SliderRange(SliderComponent):
     """A SliderRange component."""
 
-    tag = "Range"
-    alias = "RadixSliderRange"
+    tag: str = "Range"
+    alias: str = "RadixSliderRange"
 
     def _apply_theme(self, theme: Component):
         self.style = Style(
@@ -124,8 +123,8 @@ class SliderRange(SliderComponent):
 class SliderThumb(SliderComponent):
     """A SliderThumb component."""
 
-    tag = "Thumb"
-    alias = "RadixSliderThumb"
+    tag: str = "Thumb"
+    alias: str = "RadixSliderThumb"
 
     def _apply_theme(self, theme: Component):
         self.style = Style(
