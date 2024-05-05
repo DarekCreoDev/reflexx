@@ -137,6 +137,7 @@ _MAPPING = {
         "EventChain",
         "EventHandler",
         "background",
+        "set_http_only_cookie",
         "call_script",
         "clear_local_storage",
         "console_log",

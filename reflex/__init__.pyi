@@ -119,6 +119,7 @@ from reflex import event as event
 from reflex.event import EventChain as EventChain
 from reflex.event import EventHandler as EventHandler
 from reflex.event import background as background
+from reflex.event import set_http_only_cookie as set_http_only_cookie
 from reflex.event import call_script as call_script
 from reflex.event import clear_local_storage as clear_local_storage
 from reflex.event import console_log as console_log
