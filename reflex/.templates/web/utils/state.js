@@ -166,13 +166,34 @@ export const applyEvent = async (event, socket) => {
   }
 
   if (event.name == "_download") {
-    const a = document.createElement("a");
-    a.hidden = true;
-    // Special case when linking to uploaded files
-    a.href = event.payload.url.replace("${getBackendURL(env.UPLOAD)}", getBackendURL(env.UPLOAD))
-    a.download = event.payload.filename;
-    a.click();
-    a.remove();
+    const getFilenameFromUrl = (url) => url.split("/").pop().split("?")[0];
+
+    // if the URL come from an upload handler, replace the backend URL placeholder with the actual backend URL
+    const downloadUrl = event.payload.url.replace(
+      "${getBackendURL(env.UPLOAD)}",
+      getBackendURL(env.UPLOAD)
+    );
+    const filename = event.payload.filename || getFilenameFromUrl(downloadUrl);
+
+    fetch(downloadUrl, {
+      method: "GET",
+      headers: { "X-Filename": filename },
+    })
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(`Download of file at ${downloadUrl} failed`);
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobURL = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.href = blobURL;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(blobURL);
+      })
+      .catch((error) => console.log(error));
     return false;
   }
 
@@ -682,11 +703,11 @@ export const useEventLoop = (
   // Route after the initial page hydration.
   useEffect(() => {
     const change_start = () => {
-      const main_state_dispatch = dispatch["state"]
+      const main_state_dispatch = dispatch["state"];
       if (main_state_dispatch !== undefined) {
-        main_state_dispatch({is_hydrated: false})
+        main_state_dispatch({ is_hydrated: false });
       }
-    }
+    };
     const change_complete = () => addEvents(onLoadInternalEvent());
     router.events.on("routeChangeStart", change_start);
     router.events.on("routeChangeComplete", change_complete);

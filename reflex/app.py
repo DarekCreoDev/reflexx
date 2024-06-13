@@ -31,7 +31,6 @@ from typing import (
 from fastapi import FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware import cors
 from fastapi.responses import StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from rich.progress import MofNCompleteColumn, Progress, TimeElapsedColumn
 from socketio import ASGIApp, AsyncNamespace, AsyncServer
 from starlette_admin.contrib.sqla.admin import Admin
@@ -78,6 +77,7 @@ from reflex.state import (
     _substate_key,
     code_uses_state_contexts,
 )
+from reflex.staticfiles import UploadedFiles
 from reflex.utils import console, exceptions, format, prerequisites, types
 from reflex.utils.exec import is_testing_env, should_skip_compile
 from reflex.utils.imports import ImportVar
@@ -338,7 +338,7 @@ class App(LifespanMixin, Base):
             # To access uploaded files.
             self.api.mount(
                 str(constants.Endpoint.UPLOAD),
-                StaticFiles(directory=get_upload_dir()),
+                UploadedFiles(directory=get_upload_dir()),
                 name="uploaded_files",
             )
 
