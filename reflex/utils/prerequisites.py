@@ -1443,22 +1443,19 @@ def create_config_init_app_from_remote_template(app_name: str, template_url: str
     shutil.rmtree(unzip_dir)
 
 
-def initialize_app(app_name: str, template: str | None = None):
+def initialize_app(app_name: str, template: str | None = None, reinit: bool = False):
     """Initialize the app either from a remote template or a blank app. If the config file exists, it is considered as reinit.
 
     Args:
         app_name: The name of the app.
         template: The name of the template to use.
+        reinit: Whether to reinitialize the app.
 
     Raises:
         Exit: If template is directly provided in the command flag and is invalid.
     """
-    # Local imports to avoid circular imports.
-    from reflex.utils import telemetry
-
-    # Check if the app is already initialized.
-    if os.path.exists(constants.Config.FILE):
-        telemetry.send("reinit")
+    # Check if the app is already initialized. If so, we don't need to init.
+    if reinit:
         return
 
     templates: dict[str, Template] = {}
@@ -1504,8 +1501,6 @@ def initialize_app(app_name: str, template: str | None = None):
         create_config_init_app_from_remote_template(
             app_name=app_name, template_url=template_url
         )
-
-    telemetry.send("init", template=template)
 
 
 def initialize_main_module_index_from_generation(app_name: str, generation_hash: str):

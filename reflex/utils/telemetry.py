@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import multiprocessing
+import os
 import platform
+import time
 import warnings
 
 try:
@@ -82,6 +84,21 @@ def get_memory() -> int:
         return 0
 
 
+def get_page_count(folder: str) -> int:
+    """Get the total number of files in a folder.
+
+    Args:
+        folder: The path to the folder.
+
+    Returns:
+        The total number of files in the folder.
+    """
+    total_files = 0
+    for _, _, filenames in os.walk(folder):
+        total_files += len(filenames)
+    return total_files
+
+
 def _raise_on_missing_project_hash() -> bool:
     """Check if an error should be raised when project hash is missing.
 
@@ -96,6 +113,20 @@ def _raise_on_missing_project_hash() -> bool:
     if should_skip_compile():
         return False
     return True
+
+
+def compile_callback(f, start_time):
+    """Callback to send telemetry after compiling the app.
+
+    Args:
+        f: The future object.
+        start_time: The start time of the compilation.
+    """
+    try:
+        # Force background compile errors to print eagerly
+        f.result()
+    finally:
+        send("compile", duration=time.perf_counter() - start_time)
 
 
 def _prepare_event(event: str, **kwargs) -> dict:
@@ -128,12 +159,12 @@ def _prepare_event(event: str, **kwargs) -> dict:
 
     cpuinfo = get_cpu_info()
 
-    additional_keys = ["template", "context", "detail"]
+    additional_keys = ["template", "context", "detail", "duration"]
     additional_fields = {
         key: value for key in additional_keys if (value := kwargs.get(key)) is not None
     }
     return {
-        "api_key": "phc_JoMo0fOyi0GQAooY3UyO9k0hebGkMyFJrrCw1Gt5SGb",
+        "api_key": "phc_JoMo0fOyi0GQAooY3UyO9k0hebGkMyFJrrCw1Gt5SGb", # Public API key
         "event": event,
         "properties": {
             "distinct_id": installation_id,
@@ -145,6 +176,9 @@ def _prepare_event(event: str, **kwargs) -> dict:
             "cpu_count": get_cpu_count(),
             "memory": get_memory(),
             "cpu_info": dict(cpuinfo) if cpuinfo else {},
+            "pages_count": get_page_count(".web/pages")
+            if event == "compile" or event == "run-dev"
+            else None,
             **additional_fields,
         },
         "timestamp": stamp,

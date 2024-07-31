@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import atexit
 import os
+import time
 import webbrowser
 from pathlib import Path
 from typing import List, Optional
@@ -108,8 +109,13 @@ def _init(
             raise typer.Exit(2)
         template = constants.Templates.DEFAULT
 
+    start_time = time.perf_counter()
+
+    # Check if the app is already initialized.
+    reinit = os.path.exists(constants.Config.FILE)
+
     # Initialize the app.
-    prerequisites.initialize_app(app_name, template)
+    prerequisites.initialize_app(app_name, template, reinit=reinit)
 
     # If a reflex.build generation hash is available, download the code and apply it to the main module.
     if generation_hash:
@@ -128,6 +134,10 @@ def _init(
 
     # Finish initializing the app.
     console.success(f"Initialized {app_name}")
+
+    # Post telemetry event
+    event_type = "reinit" if reinit else "init"
+    telemetry.send(event_type, duration=time.perf_counter() - start_time)
 
 
 @cli.command()
