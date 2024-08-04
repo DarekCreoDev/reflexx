@@ -943,6 +943,8 @@ class App(MiddlewareMixin, LifespanMixin, Base):
         compile_results.append(
             compiler.compile_contexts(self.state, self.theme),
         )
+        # Compile the state
+        compile_results.append(compiler.compile_state())
         # Fix #2992 by removing the top-level appearance prop
         if self.theme is not None:
             self.theme.appearance = None
