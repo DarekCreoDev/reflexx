@@ -1,263 +1,133 @@
-```diff
-+ Searching for Pynecone? You are in the right repo. Pynecone has been renamed to Reflex. +
-```
+# Reflex Docker Container
 
-<div align="center">
-<img src="https://raw.githubusercontent.com/reflex-dev/reflex/main/docs/images/reflex_dark.svg#gh-light-mode-only" alt="Reflex Logo" width="300px">
-<img src="https://raw.githubusercontent.com/reflex-dev/reflex/main/docs/images/reflex_light.svg#gh-dark-mode-only" alt="Reflex Logo" width="300px">
+This example describes how to create and use a container image for Reflex with your own code.
 
-<hr>
+## Update Requirements
 
-### **✨ Performant, customizable web apps in pure Python. Deploy in seconds. ✨**
-[![PyPI version](https://badge.fury.io/py/reflex.svg)](https://badge.fury.io/py/reflex)
-![tests](https://github.com/pynecone-io/pynecone/actions/workflows/integration.yml/badge.svg)
-![versions](https://img.shields.io/pypi/pyversions/reflex.svg)
-[![Documentation](https://img.shields.io/badge/Documentation%20-Introduction%20-%20%23007ec6)](https://reflex.dev/docs/getting-started/introduction)
-[![Discord](https://img.shields.io/discord/1029853095527727165?color=%237289da&label=Discord)](https://discord.gg/T5WSbC2YtQ)
-</div>
+The `requirements.txt` includes the reflex package which is needed to install
+Reflex framework. If you use additional packages in your project you have to add
+this in the `requirements.txt` first. Copy the `Dockerfile`, `.dockerignore` and
+the `requirements.txt` file in your project folder.
 
----
+## Build Simple Reflex Container Image
 
-[English](https://github.com/reflex-dev/reflex/blob/main/README.md) | [简体中文](https://github.com/reflex-dev/reflex/blob/main/docs/zh/zh_cn/README.md) | [繁體中文](https://github.com/reflex-dev/reflex/blob/main/docs/zh/zh_tw/README.md) | [Türkçe](https://github.com/reflex-dev/reflex/blob/main/docs/tr/README.md) | [हिंदी](https://github.com/reflex-dev/reflex/blob/main/docs/in/README.md) | [Português (Brasil)](https://github.com/reflex-dev/reflex/blob/main/docs/pt/pt_br/README.md) | [Italiano](https://github.com/reflex-dev/reflex/blob/main/docs/it/README.md) | [Español](https://github.com/reflex-dev/reflex/blob/main/docs/es/README.md) | [한국어](https://github.com/reflex-dev/reflex/blob/main/docs/kr/README.md) | [日本語](https://github.com/reflex-dev/reflex/blob/main/docs/ja/README.md) | [Deutsch](https://github.com/reflex-dev/reflex/blob/main/docs/de/README.md) | [Persian (پارسی)](https://github.com/reflex-dev/reflex/blob/main/docs/pe/README.md)
+The main `Dockerfile` is intended to build a very simple, single container deployment that runs
+the Reflex frontend and backend together, exposing ports 3000 and 8000.
 
----
-
-# Reflex
-
-Reflex is a library to build full-stack web apps in pure Python.
-
-Key features:
-* **Pure Python** - Write your app's frontend and backend all in Python, no need to learn Javascript.
-* **Full Flexibility** - Reflex is easy to get started with, but can also scale to complex apps.
-* **Deploy Instantly** - After building, deploy your app with a [single command](https://reflex.dev/docs/hosting/deploy-quick-start/) or host it on your own server.
-
-See our [architecture page](https://reflex.dev/blog/2024-03-21-reflex-architecture/#the-reflex-architecture) to learn how Reflex works under the hood.
-
-## ⚙️ Installation
-
-Open a terminal and run (Requires Python 3.8+):
+To build your container image run the following command:
 
 ```bash
-pip install reflex
+docker build -t reflex-app:latest .
 ```
 
-## 🥳 Create your first app
+## Start Container Service
 
-Installing `reflex` also installs the `reflex` command line tool.
-
-Test that the install was successful by creating a new project. (Replace `my_app_name` with your project name):
+Finally, you can start your Reflex container service as follows:
 
 ```bash
-mkdir my_app_name
-cd my_app_name
-reflex init
+docker run -it --rm -p 3000:3000 -p 8000:8000 --name app reflex-app:latest
 ```
 
-This command initializes a template app in your new directory. 
+It may take a few seconds for the service to become available.
 
-You can run this app in development mode:
+Access your app at http://localhost:3000.
+
+Note that this container has _no persistence_ and will lose all data when
+stopped. You can use bind mounts or named volumes to persist the database and
+uploaded_files directories as needed.
+
+# Production Service with Docker Compose and Caddy
+
+An example production deployment uses automatic TLS with Caddy serving static files
+for the frontend and proxying requests to both the frontend and backend.
+
+Copy the following files to your project directory:
+  * `compose.yaml`
+  * `compose.prod.yaml`
+  * `compose.tools.yaml`
+  * `prod.Dockerfile`
+  * `Caddy.Dockerfile`
+  * `Caddyfile`
+
+The production app container, based on `prod.Dockerfile`, builds and exports the
+frontend statically (to be served by Caddy). The resulting image only runs the
+backend service.
+
+The `webserver` service, based on `Caddy.Dockerfile`, copies the static frontend
+and `Caddyfile` into the container to configure the reverse proxy routes that will
+forward requests to the backend service. Caddy will automatically provision TLS
+for localhost or the domain specified in the environment variable `DOMAIN`.
+
+This type of deployment should use less memory and be more performant since
+nodejs is not required at runtime.
+
+## Customize `Caddyfile` (optional)
+
+If the app uses additional backend API routes, those should be added to the
+`@backend_routes` path matcher to ensure they are forwarded to the backend.
+
+## Build Reflex Production Service
+
+During build, set `DOMAIN` environment variable to the domain where the app will
+be hosted!  (Do not include http or https, it will always use https).
+
+**If `DOMAIN` is not provided, the service will default to `localhost`.**
 
 ```bash
-reflex run
+DOMAIN=example.com docker compose build
 ```
 
-You should see your app running at http://localhost:3000.
+This will build both the `app` service from the `prod.Dockerfile` and the `webserver`
+service via `Caddy.Dockerfile`.
 
-Now you can modify the source code in `my_app_name/my_app_name.py`. Reflex has fast refreshes so you can see your changes instantly when you save your code.
+## Run Reflex Production Service
 
-
-## 🫧 Example App
-
-Let's go over an example: creating an image generation UI around [DALL·E](https://platform.openai.com/docs/guides/images/image-generation?context=node). For simplicity, we just call the [OpenAI API](https://platform.openai.com/docs/api-reference/authentication), but you could replace this with an ML model run locally.
-
-&nbsp;
-
-<div align="center">
-<img src="https://raw.githubusercontent.com/reflex-dev/reflex/main/docs/images/dalle.gif" alt="A frontend wrapper for DALL·E, shown in the process of generating an image." width="550" />
-</div>
-
-&nbsp;
-
-Here is the complete code to create this. This is all done in one Python file!
-
-
-  
-```python
-import reflex as rx
-import openai
-
-openai_client = openai.OpenAI()
-
-
-class State(rx.State):
-    """The app state."""
-
-    prompt = ""
-    image_url = ""
-    processing = False
-    complete = False
-
-    def get_image(self):
-        """Get the image from the prompt."""
-        if self.prompt == "":
-            return rx.window_alert("Prompt Empty")
-
-        self.processing, self.complete = True, False
-        yield
-        response = openai_client.images.generate(
-            prompt=self.prompt, n=1, size="1024x1024"
-        )
-        self.image_url = response.data[0].url
-        self.processing, self.complete = False, True
-
-
-def index():
-    return rx.center(
-        rx.vstack(
-            rx.heading("DALL-E", font_size="1.5em"),
-            rx.input(
-                placeholder="Enter a prompt..",
-                on_blur=State.set_prompt,
-                width="25em",
-            ),
-            rx.button(
-                "Generate Image", 
-                on_click=State.get_image,
-                width="25em",
-                loading=State.processing
-            ),
-            rx.cond(
-                State.complete,
-                rx.image(src=State.image_url, width="20em"),
-            ),
-            align="center",
-        ),
-        width="100%",
-        height="100vh",
-    )
-
-# Add state and page to the app.
-app = rx.App()
-app.add_page(index, title="Reflex:DALL-E")
+```bash
+DOMAIN=example.com docker compose up
 ```
 
+The app should be available at the specified domain via HTTPS. Certificate
+provisioning will occur automatically and may take a few minutes.
 
+### Data Persistence
 
+Named docker volumes are used to persist the app database (`db-data`),
+uploaded_files (`upload-data`), and caddy TLS keys and certificates
+(`caddy-data`).
 
+## More Robust Deployment
 
-## Let's break this down.
+For a more robust deployment, consider bringing the service up with
+`compose.prod.yaml` which includes postgres database and redis cache, allowing
+the backend to run with multiple workers and service more requests.
 
-<div align="center">
-<img src="docs/images/dalle_colored_code_example.png" alt="Explaining the differences between backend and frontend parts of the DALL-E app." width="900" />
-</div>
-
-
-### **Reflex UI**
-
-Let's start with the UI.
-
-```python
-def index():
-    return rx.center(
-        ...
-    )
+```bash
+DOMAIN=example.com docker compose -f compose.yaml -f compose.prod.yaml up -d
 ```
 
-This `index` function defines the frontend of the app.
+Postgres uses its own named docker volume for data persistence.
 
-We use different components such as `center`, `vstack`, `input`, and `button` to build the frontend. Components can be nested within each other
-to create complex layouts. And you can use keyword args to style them with the full power of CSS.
+## Admin Tools
 
-Reflex comes with [60+ built-in components](https://reflex.dev/docs/library) to help you get started. We are actively adding more components, and it's easy to [create your own components](https://reflex.dev/docs/wrapping-react/overview/).
+When needed, the services in `compose.tools.yaml` can be brought up, providing
+graphical database administration (Adminer on http://localhost:8080) and a
+redis cache browser (redis-commander on http://localhost:8081). It is not recommended
+to deploy these services if they are not in active use.
 
-### **State**
-
-Reflex represents your UI as a function of your state.
-
-```python
-class State(rx.State):
-    """The app state."""
-    prompt = ""
-    image_url = ""
-    processing = False
-    complete = False
-
+```bash
+DOMAIN=example.com docker compose -f compose.yaml -f compose.prod.yaml -f compose.tools.yaml up -d
 ```
 
-The state defines all the variables (called vars) in an app that can change and the functions that change them.
+# Container Hosting
 
-Here the state is comprised of a `prompt` and `image_url`. There are also the booleans `processing` and `complete` to indicate when to disable the button (during image generation) and when to show the resulting image.
+Most container hosting services automatically terminate TLS and expect the app
+to be listening on a single port (typically `$PORT`).
 
-### **Event Handlers**
+To host a Reflex app on one of these platforms, like Google Cloud Run, Render,
+Railway, etc, use `app.Dockerfile` to build a single image containing a reverse
+proxy that will serve that frontend as static files and proxy requests to the
+backend for specific endpoints.
 
-```python
-def get_image(self):
-    """Get the image from the prompt."""
-    if self.prompt == "":
-        return rx.window_alert("Prompt Empty")
-
-    self.processing, self.complete = True, False
-    yield
-    response = openai_client.images.generate(
-        prompt=self.prompt, n=1, size="1024x1024"
-    )
-    self.image_url = response.data[0].url
-    self.processing, self.complete = False, True
-```
-
-Within the state, we define functions called event handlers that change the state vars. Event handlers are the way that we can modify the state in Reflex. They can be called in response to user actions, such as clicking a button or typing in a text box. These actions are called events.
-
-Our DALL·E. app has an event handler, `get_image` to which get this image from the OpenAI API. Using `yield` in the middle of an event handler will cause the UI to update. Otherwise the UI will update at the end of the event handler.
-
-### **Routing**
-
-Finally, we define our app.
-
-```python
-app = rx.App()
-```
-
-We add a page from the root of the app to the index component. We also add a title that will show up in the page preview/browser tab.
-
-```python
-app.add_page(index, title="DALL-E")
-```
-
-You can create a multi-page app by adding more pages.
-
-## 📑 Resources
-
-<div align="center">
-
-📑 [Docs](https://reflex.dev/docs/getting-started/introduction) &nbsp; |  &nbsp; 🗞️ [Blog](https://reflex.dev/blog) &nbsp; |  &nbsp; 📱 [Component Library](https://reflex.dev/docs/library) &nbsp; |  &nbsp; 🖼️ [Gallery](https://reflex.dev/docs/gallery) &nbsp; |  &nbsp; 🛸 [Deployment](https://reflex.dev/docs/hosting/deploy-quick-start)  &nbsp;   
-
-</div>
-
-
-## ✅ Status
-
-Reflex launched in December 2022 with the name Pynecone.
-
-As of February 2024, our hosting service is in alpha! During this time anyone can deploy their apps for free. See our [roadmap](https://github.com/reflex-dev/reflex/issues/2727) to see what's planned.
-
-Reflex has new releases and features coming every week! Make sure to :star: star and :eyes: watch this repository to stay up to date.
-
-## Contributing
-
-We welcome contributions of any size! Below are some good ways to get started in the Reflex community.
-
--   **Join Our Discord**: Our [Discord](https://discord.gg/T5WSbC2YtQ) is the best place to get help on your Reflex project and to discuss how you can contribute.
--   **GitHub Discussions**: A great way to talk about features you want added or things that are confusing/need clarification.
--   **GitHub Issues**: [Issues](https://github.com/reflex-dev/reflex/issues) are an excellent way to report bugs. Additionally, you can try and solve an existing issue and submit a PR.
-
-We are actively looking for contributors, no matter your skill level or experience. To contribute check out [CONTIBUTING.md](https://github.com/reflex-dev/reflex/blob/main/CONTRIBUTING.md)
-
-
-## All Thanks To Our Contributors:
-<a href="https://github.com/reflex-dev/reflex/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=reflex-dev/reflex" />
-</a>
-
-## License
-
-Reflex is open-source and licensed under the [Apache License 2.0](LICENSE).
+If the chosen platform does not support buildx and thus heredoc, you can copy
+the Caddyfile configuration into a separate Caddyfile in the root of the
+project.
